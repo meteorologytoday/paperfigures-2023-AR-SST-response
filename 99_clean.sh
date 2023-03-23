@@ -3,5 +3,5 @@
 source 00_setup.sh
 
 
-echo "Remove folders: figures, final_figures"
-rm -rf $figuredir $finalfiguredir
+echo "Remove folders: ${fig_dir}, ${finalfig_dir}"
+rm -rf $fig_dir $finalfig_dir

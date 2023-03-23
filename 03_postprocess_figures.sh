@@ -9,6 +9,10 @@ mkdir $finalfig_dir
 
 echo "Making final figures... "
 
+convert $fig_dir/G_terms_atmocn_2.png \
+        $fig_dir/G_terms_atm_2.png \
+        $fig_dir/G_terms_ocn_2.png \
+        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
 
 # Merging two sub-figures
 convert \( \
@@ -19,7 +23,11 @@ convert \( \
      $fig_dir/merged-EOF-forcing.png
 
 name_pairs=(
-    merged-EOF-forcing.png fig01.png
+    merged-EOF-forcing.png              fig01.png
+    merged-G_terms_map_breakdown.png    fig02.png
+    G_terms_atmocn_1.png                figS01.png
+    G_terms_atm_1.png                   figS02.png
+    G_terms_ocn_1.png                   figS03.png
 )
 
 N=$(( ${#name_pairs[@]} / 2 ))

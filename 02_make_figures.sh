@@ -2,15 +2,18 @@
 
 source 00_setup.sh
 
-plot_codes=(
-    $py $$src_dir/plot_AR_freq_with_std.py "--input $diagdata_dir/AR_interannual_statistics_${yrng_str}.nc --output $fig_dir/AR_freq_std.png"
-    $py $$src_dir/plot_EOF_analysis.py "--input $diagdata_dir/EOF.nc --input-NINO $climidx_dir/NINO34.nc --input-PDO $climidx_dir/PDO.nc --output-EOF $fig_dir/AR_EOF.png --output-timeseries $fig_dir/AR_EOF_timeseries.png"
-    $py $$src_dir/plot_AR_basic_diagnostics.py "--input $diagdata_dir/AR_simple_statistics_${yrng_str}.nc --output $fig_dir/zonal_mean_AR_forcing.png"
-)
+py=python3
+sh=bash
+
+
 
 plot_codes=(
-    $bs 11_plot_G_terms_breakdown.sh ""
+    $py $src_dir/plot_AR_freq_with_std.py "--input $diagdata_dir/AR_interannual_statistics_${yrng_str}.nc --output $fig_dir/AR_freq_std.png"
+    $py $src_dir/plot_EOF_analysis.py "--input $diagdata_dir/EOF.nc --input-NINO $climidx_dir/NINO34.nc --input-PDO $climidx_dir/PDO.nc --output-EOF $fig_dir/AR_EOF.png --output-timeseries $fig_dir/AR_EOF_timeseries.png"
+    $py $src_dir/plot_AR_basic_diagnostics.py "--input $diagdata_dir/AR_simple_statistics_${yrng_str}.nc --output $fig_dir/zonal_mean_AR_forcing.png"
+    $sh 11_plot_G_terms_breakdown.sh "BLANK"
 )
+
 
 
 mkdir $fig_dir

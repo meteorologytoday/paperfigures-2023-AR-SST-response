@@ -230,12 +230,12 @@ proj_norm = ccrs.PlateCarree()
 varnames = args.varnames
 
 figsize, gridspec_kw = tool_fig_config.calFigParams(
-    w = 5.0,
+    w = 4.8,
     h = 2.0,
     wspace = 1.0,
-    hspace = 1.0,
+    hspace = 0.5,
     w_left = 1.0,
-    w_right = 1.0,
+    w_right = 1.5,
     h_bottom = 1.0,
     h_top = 1.0,
     ncol = len(t_months),
@@ -266,15 +266,17 @@ for i, mon in enumerate(t_months):
     m = mon - 1
 
 
-    _ax[0].set_title([
-        "Oct",
-        "Nov",
-        "Dec",
-        "Jan",
-        "Feb",
-        "Mar",
-        "Oct-Mar",
-    ][m])
+    # Set title for different month except for the whole average mon==7
+    if mon != 7:
+        _ax[0].set_title([
+            "Oct",
+            "Nov",
+            "Dec",
+            "Jan",
+            "Feb",
+            "Mar",
+            "Oct-Mar",
+        ][m], size=20)
 
     for i, varname in enumerate(varnames):
 
@@ -344,7 +346,7 @@ for i, mon in enumerate(t_months):
 
 
 for i in range(len(mappables)):
-    cax = tool_fig_config.addAxesNextToAxes(fig, ax[i, -1], "left", thickness=0.02, spacing=0.05)#, size="2%", pad="5%", axes_class=plt.Axes)
+    cax = tool_fig_config.addAxesNextToAxes(fig, ax[i, -1], "right", thickness=0.03, spacing=0.05)
     cb = plt.colorbar(mappables[i], cax=cax, orientation="vertical", pad=0.00)
     cb.ax.set_ylabel(" %s [ $ 1 \\times 10^{-6} \\, \\mathrm{K} \\, / \\, \\mathrm{s} $ ]" % (plot_infos[varnames[i]]["label"],))
 
