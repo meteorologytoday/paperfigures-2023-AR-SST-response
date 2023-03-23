@@ -1,7 +1,4 @@
 import numpy as np
-#import fmon_tools, watertime_tools
-import anomalies
-import ARstat_tool
 import xarray as xr
 import pandas as pd
 
@@ -43,6 +40,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--input', type=str, help='Input file', required=True)
 parser.add_argument('--input-NINO', type=str, help='Input NINO index file', default="")
+parser.add_argument('--input-PDO',  type=str, help='Input NINO index file', default="")
 parser.add_argument('--output-EOF', type=str, help='Input file', default="")
 parser.add_argument('--output-timeseries', type=str, help='Input file', default="")
 parser.add_argument('--title', type=str, help='Output title', default="")
@@ -52,34 +50,44 @@ args = parser.parse_args()
 print(args)
 
 
+
 ds = xr.open_dataset(args.input)
 
-corr = []
 
-if args.input_NINO != "":
+climidx_names = ["NINO", "PDO"]
+corr = {}
+climidx = {}
 
-    ds_NINO = xr.open_dataset(args.input_NINO)
 
-    nino_idx = np.zeros((len(ds.coords["time"]), ))
+_args = vars(args)
+for climidx_name in climidx_names:
 
-    for i in range(len(nino_idx)):
-        date_selected = pd.date_range("%04d-01-01" % (ds.time.dt.year[i],), freq="MS", periods=6) - pd.DateOffset(months=3)
-        #print(date_selected)
-        #print(ds_NINO.time)
-        #print(ds_NINO["anom"].sel(time=date_selected).mean(dim="time"))
-        nino_idx[i] = ds_NINO["anom"].sel(time=date_selected).mean(dim="time")
-       
-        print("Year %04d: %.2f" % (ds.time.dt.year[i], nino_idx[i])) 
-    #nino_idx = ds_NINO.sel(time=ds_NINO.time.dt.season=="DJF").groupby("time.dt.year").mean(dim="time")
+    argname = "input_%s" % (climidx_name,)
 
-   
-    #nino_idx.sel(time=ds.)
+    if _args[argname] != "":
 
-    for i in range(2):
-        corr.append(correlate(nino_idx, ds["amps_normalized"].sel(EOF=i)))
-        print(corr[i])
-        print("test: ", correlate(nino_idx, nino_idx))
+        corr[climidx_name] = []
 
+        ds_climidx = xr.open_dataset(_args[argname])
+        _climidx = np.zeros((len(ds.coords["time"]), ))
+
+        for i in range(len(_climidx)):
+            date_selected = pd.date_range("%04d-01-01" % (ds.time.dt.year[i],), freq="MS", periods=6) - pd.DateOffset(months=3)
+            _climidx[i] = ds_climidx["anom"].sel(time=date_selected).mean(dim="time")
+           
+            print("[%s] Year %04d: %.2f" % (climidx_name, ds.time.dt.year[i], _climidx[i])) 
+
+        print(_climidx)
+
+        for i in range(2):
+            corr[climidx_name].append(correlate(_climidx, ds["amps_normalized"].sel(EOF=i)))
+
+
+        climidx[climidx_name] = _climidx
+
+for climidx_name, _corr in corr.items():
+    for i in range(len(_corr)):
+        print(climidx_name, " corr with EOF%d: " % (i+1), _corr[i])
 
 # Plot data
 print("Loading Matplotlib...")
@@ -162,25 +170,37 @@ for i, _ax in enumerate(ax):
 fig_timeseries, ax = plt.subplots(1, 1, figsize=(6, 4))
 
 
-for i in range(2):
+for i in range(2): #len(ds.coords["EOF"])):
 
     line_prop = [
         dict(ls="solid",  color="k", ),
         dict(ls="dashed", color="k", ),
     ][i]
 
-    ax.plot(ds.coords["time"].dt.year, ds["amps_normalized"].sel(EOF=i), **line_prop, label="EOF%d, $R^2=%.2f$" % (i+1, corr[i][0]))
-    
-ax.plot(ds.coords["time"].dt.year, nino_idx / np.std(nino_idx), "r-", label="NINO3.4")
+    label = "EOF%d" % (i+1,)
+   
+    #if len(corr) != 0:
+    #    label = "%s, $R^2=%.2f$" % (corr[i][0],)
+   
+    ax.plot(ds.coords["time"].dt.year, ds["amps_normalized"].sel(EOF=i), **line_prop, label=label)
+
+for climidx_name, climidx in climidx.items():
+ 
+    prop = dict(
+        NINO = dict(ls="solid", color="orangered",  label="NINO3.4"),
+        PDO  = dict(ls="solid", color="dodgerblue", label="PDO"),
+    )[climidx_name]
+
+    ax.plot(ds.coords["time"].dt.year, climidx / np.std(climidx), **prop)
 
 ax.set_xlabel("Time")
 ax.set_ylabel("Normalized index")
 
 ax.legend()
 ax.grid()
-ax.set_title("Timeseries of EOF indices")
+#ax.set_title("Timeseries of EOF indices")
 
-
+"""
 # Figure 3: cross-correlation
 fig_corr, ax = plt.subplots(1, 1, figsize=(6, 4))
 
@@ -188,6 +208,7 @@ for i in range(len(corr)):
     ax.plot(list(range(len(corr[i]))), corr[i], label="EOF%d" % (i,))
 
 ax.legend()
+"""
 
 if not args.no_display:
     plt.show()
