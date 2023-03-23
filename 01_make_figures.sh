@@ -5,7 +5,7 @@ bs=bash
 srcdir=src
 
 plot_codes=(
-    $py $srcdir/plot_EOF.py
+    $py $srcdir/plot_EOF.py --input
 )
 
 mkdir figures
