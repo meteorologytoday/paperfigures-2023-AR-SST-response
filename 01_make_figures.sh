@@ -30,7 +30,7 @@ for i in $( seq 1 $(( ${#plot_codes[@]} / 3 )) ) ; do
     FILE="${plot_codes[$(( (i-1) * 3 + 1 ))]}"
     OPTS="${plot_codes[$(( (i-1) * 3 + 2 ))]}"
     echo "=====[ Running file: $FILE ]====="
-    eval "$PROG $FILE $OPTS" 
+    eval "$PROG $FILE $OPTS" & 
 done
 
 

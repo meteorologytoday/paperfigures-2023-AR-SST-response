@@ -42,6 +42,7 @@ parser.add_argument('--input', type=str, help='Input file', required=True)
 parser.add_argument('--input-NINO', type=str, help='Input NINO index file', default="")
 parser.add_argument('--input-PDO',  type=str, help='Input NINO index file', default="")
 parser.add_argument('--output-EOF', type=str, help='Input file', default="")
+parser.add_argument('--nEOF', type=int, help='Input file', default=2)
 parser.add_argument('--output-timeseries', type=str, help='Input file', default="")
 parser.add_argument('--title', type=str, help='Output title', default="")
 parser.add_argument('--no-display', action="store_true")
@@ -79,7 +80,7 @@ for climidx_name in climidx_names:
 
         print(_climidx)
 
-        for i in range(2):
+        for i in range(args.nEOF):
             corr[climidx_name].append(correlate(_climidx, ds["amps_normalized"].sel(EOF=i)))
 
 
@@ -170,7 +171,7 @@ for i, _ax in enumerate(ax):
 fig_timeseries, ax = plt.subplots(1, 1, figsize=(6, 4))
 
 
-for i in range(2): #len(ds.coords["EOF"])):
+for i in range(args.nEOF): #len(ds.coords["EOF"])):
 
     line_prop = [
         dict(ls="solid",  color="k", ),
@@ -191,6 +192,9 @@ for climidx_name, climidx in climidx.items():
         PDO  = dict(ls="solid", color="dodgerblue", label="PDO"),
     )[climidx_name]
 
+    corr_str = ["%.2f" % corr[climidx_name][i][0] for i in range(args.nEOF)]
+    prop["label"] = "%s (%s)" % (prop["label"], ", ".join(corr_str))
+        
     ax.plot(ds.coords["time"].dt.year, climidx / np.std(climidx), **prop)
 
 ax.set_xlabel("Time")
