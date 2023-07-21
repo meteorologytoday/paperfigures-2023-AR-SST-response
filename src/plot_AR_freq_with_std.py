@@ -52,8 +52,8 @@ print("done")
 
 cent_lon = 180.0
 
-plot_lon_l = 120.0
-plot_lon_r = 240.0
+plot_lon_l = 100.0
+plot_lon_r = 260.0
 plot_lat_b = 10.0
 plot_lat_t = 60.0
 
@@ -62,13 +62,13 @@ proj_norm = ccrs.PlateCarree()
 
 fig, ax = plt.subplots(
     1, 1,
-    figsize=(6, 4),
+    figsize=(8, 4),
     subplot_kw=dict(projection=proj),
     gridspec_kw=dict(hspace=0, wspace=0.2),
     constrained_layout=False,
 )
 
-ax.set_title("AR days per year (shading) and variability (contour)")
+ax.set_title("(a) AR days per year (shading)\nand variability (contour)")
 
 coords = ds.coords
 cmap = cm.get_cmap("GnBu")
@@ -76,13 +76,17 @@ cmap = cm.get_cmap("GnBu")
 #cmap.set_over("yellow")
 #cmap.set_under("red")
 
-mean_levels = np.linspace(0, 70, 15)
+#mean_levels = np.linspace(0, 70, 15)
+mean_levels = np.linspace(0, 30, 6)
 std_levels = np.linspace(0, 20, 11)
 
 mappable = ax.contourf(coords["lon"], coords["lat"], AR_mean, levels=mean_levels, cmap=cmap, extend="max", transform=proj_norm)
 cs = ax.contour(coords["lon"], coords["lat"], AR_std, levels=std_levels, colors="k", transform=proj_norm, linewidths=1)
 
 ax.clabel(cs, fmt="%d")
+
+ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
+ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
 
 
 ax.set_global()

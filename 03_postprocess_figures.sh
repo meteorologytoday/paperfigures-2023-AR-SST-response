@@ -14,20 +14,51 @@ convert $fig_dir/G_terms_atmocn_2.png \
         $fig_dir/G_terms_ocn_2.png \
         -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
 
+convert $fig_dir/G_terms_atmocn_500m_2.png \
+        $fig_dir/G_terms_atm_500m_2.png \
+        $fig_dir/G_terms_ocn_500m_2.png \
+        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown_500m.png
+
+
 # Merging two sub-figures
-convert \( \
-    \( $fig_dir/AR_freq_std.png \) \
-    \( $fig_dir/AR_EOF.png \) \
-    \( $fig_dir/AR_EOF_timeseries.png \) -gravity west -append \
-    \) \( $fig_dir/zonal_mean_AR_forcing.png \) -gravity west +append \
+convert \
+    \(  \
+        \( $fig_dir/AR_freq_std.png -gravity South -chop 0x100 \)  \
+        \( $fig_dir/AR_EOF.png -gravity North -chop 0x200 -resize 90% \)  -gravity Northwest -append \
+    \) -gravity East -chop 200x0 \(                               \
+        $fig_dir/atmsfc_2.png -gravity West -chop 100x0          \
+    \) -gravity Northwest +append       \
      $fig_dir/merged-EOF-forcing.png
 
+convert \
+    \( $fig_dir/analysis_advbkdn__2.png \)  \
+    \( $fig_dir/analysis_mldandcld__2.png \)  \
+    -gravity Northwest +append       \
+     $fig_dir/merged-additional-analysis.png
+
+
+
+if [ ] ; then
+# This adds in the EOF timeseries. I think it is okay to just write the
+# correlation with PDO and ENSO in the paper or caption
+convert \
+    \(  \
+        \( $fig_dir/AR_freq_std.png \)  \
+        \( $fig_dir/AR_EOF.png \)       \
+        \( $fig_dir/AR_EOF_timeseries.png \) -gravity Northwest -append \
+    \) \(                               \
+        $fig_dir/atmsfc_2.png           \
+    \) -gravity Northwest +append       \
+     $fig_dir/merged-EOF-forcing.png
+fi
+
 name_pairs=(
-    merged-EOF-forcing.png              fig01.png
-    merged-G_terms_map_breakdown.png    fig02.png
-    G_terms_atmocn_1.png                figS01.png
-    G_terms_atm_1.png                   figS02.png
-    G_terms_ocn_1.png                   figS03.png
+    merged-EOF-forcing.png                 fig01.png
+    merged-G_terms_map_breakdown.png       fig02.png
+    merged-additional-analysis.png         fig03.png
+    G_terms_atm_1.png                      fig04.png
+    G_terms_ocn_1.png                      fig05.png
+    G_terms_atmocn_1.png                   figS01.png
 )
 
 N=$(( ${#name_pairs[@]} / 2 ))

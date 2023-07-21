@@ -118,8 +118,8 @@ print("done")
 
 cent_lon = 180.0
 
-plot_lon_l = 120.0
-plot_lon_r = 240.0
+plot_lon_l = 100.0
+plot_lon_r = 260.0
 plot_lat_b = 10.0
 plot_lat_t = 60.0
 
@@ -128,7 +128,7 @@ proj_norm = ccrs.PlateCarree()
 
 fig_EOF, ax = plt.subplots(
     2, 1,
-    figsize=(6, 6),
+    figsize=(8, 8),
     subplot_kw=dict(projection=proj),
     gridspec_kw=dict(hspace=0.2, wspace=0.2),
     constrained_layout=False,
@@ -136,11 +136,14 @@ fig_EOF, ax = plt.subplots(
 
 for i, _ax in enumerate(ax):
 
-    _ax.set_title("(%s) AR freqency EOF%d (explained variance = %d %%)" % ("abcdefg"[i], i+1, np.floor(ds["explained_variance_ratio"].sel(EOF=i)*100)))
+    _ax.set_title("(%s) AR freqency EOF%d (explained variance = %d %%)" % ("abcdefg"[i+1], i+1, np.floor(ds["explained_variance_ratio"].sel(EOF=i)*100)))
 
     coords = ds.coords
 
     mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i), levels=np.linspace(-1, 1, 21) * 0.1, cmap="bwr", extend="both", transform=proj_norm)
+
+    _ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
+    _ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
 
     _ax.set_global()
     _ax.coastlines()

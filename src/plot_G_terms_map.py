@@ -18,8 +18,11 @@ parser.add_argument('--input-dir', type=str, help='Input file', required=True)
 parser.add_argument('--output', type=str, help='Output file', default="")
 parser.add_argument('--varnames', type=str, nargs="+", help='Output file', default=["dMLTdt", "MLG_frc", "MLG_nonfrc"])
 parser.add_argument('--watermonths', type=int, nargs="+", help='Output file', default=[1, 2, 3, 4, 5, 6])
-parser.add_argument('--title', type=str, help='Output title', default="")
+parser.add_argument('--thumbnail-offset', type=int, help='Output file', default=0)
+parser.add_argument('--add-thumbnail-title', action="store_true")
 parser.add_argument('--no-display', action="store_true")
+parser.add_argument('--no-sig', action="store_true")
+
 args = parser.parse_args()
 print(args)
 
@@ -59,95 +62,197 @@ plot_infos_scnario = {
 }
 
 
+G_scale = 0.5
 plot_infos = {
     
     "dMLTdt" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{ttl}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ttl}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     },
 
     "MLG_frc" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{frc}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sfc}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLG_nonfrc" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{nfrc}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ocn}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLG_vdiff" : {
-        "levels": np.linspace(-1, 1, 11) * 0.2,
-        "label" : "$ G_{\mathrm{vdiff}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{vdiff}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLG_hdiff" : {
-        "levels": np.linspace(-1, 1, 11) * 0.2,
-        "label" : "$ G_{\mathrm{hdiff}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{hdiff}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
 
     "MLG_ent" : {
-        "levels": np.linspace(-1, 1, 11) * 0.2,
-        "label" : "$ G_{\mathrm{ent}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ent}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLG_adv" : {
-        "levels": np.linspace(-1, 1, 11) * 0.2,
-        "label" : "$ G_{\mathrm{adv}} $",
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
+ 
+    "MLG_frc_sw" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sw}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_frc_lw" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{lw}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_frc_sh" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sen}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_frc_lh" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{lat}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_frc_fwf" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{fwf}} $",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLHADVT_g" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "Geostrophic HADV",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLHADVT_ag" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "Ageostrophic HADV",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "ENT_ADV" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "Ent ADV",
+        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+
+
     "MXLDEPTH" : {
         "levels": np.linspace(-1, 1, 11) * 20,
+        "levels_std": np.linspace(0, 20, 21),
         "label" : "MXLDEPTH",
+        "unit"  : "$\\mathrm{m}$",
         "factor" : 1.0,
     }, 
  
     "MLD" : {
         "levels": np.linspace(-1, 1, 11) * 20,
+        "levels_std": np.linspace(0, 100, 21),
         "label" : "MLD",
+        "unit"  : "$\\mathrm{m}$",
         "factor" : 1.0,
     }, 
- 
-    "MLG_frc_sw" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{sw}} $",
-        "factor" : 1e-6,
+
+
+    "IWV" : {
+        "levels": np.linspace(0, 1, 11) * 50,
+        "levels_std": np.linspace(0, 5, 11),
+        "label" : "IWV",
+        "unit"  : "$\\mathrm{kg} \\, / \\, \\mathrm{m}^2$",
+        "factor" : 1.0,
     }, 
 
-    "MLG_frc_lw" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{lw}} $",
-        "factor" : 1e-6,
+    "IVT" : {
+        "levels": np.linspace(0, 1, 13) * 600,
+        "levels_std": np.linspace(0, 1, 11) * 200,
+        "label" : "IVT",
+        "unit"  : "$\\mathrm{kg} \\, / \\, \\mathrm{m} \\, / \\, \\mathrm{s}$",
+        "factor" : 1.0,
     }, 
 
-    "MLG_frc_sh" : {
-        "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{sen}} $",
-        "factor" : 1e-6,
+    "SFCWIND" : {
+        "levels": np.linspace(-1, 1, 13) * 6,
+        "levels_std": np.linspace(0, 5, 11),
+        "label" : "$\\left| \\vec{V}_{10} \\right|$",
+        "unit"  : "$\\mathrm{m} \\, / \\, \\mathrm{s}$",
+        "factor" : 1.0,
     }, 
 
-    "MLG_frc_lh" : {
+    "lcc" : {
         "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{lat}} $",
-        "factor" : 1e-6,
+        "levels_std": np.linspace(0, 1, 11) * 0.5,
+        "label" : "LCC",
+        "unit"  : "",
+        "factor" : 1.0,
     }, 
 
-    "MLG_frc_fwf" : {
+    "mcc" : {
         "levels": np.linspace(-1, 1, 11) * 0.5,
-        "label" : "$ G_{\mathrm{fwf}} $",
-        "factor" : 1e-6,
+        "levels_std": np.linspace(0, 1, 11) * 0.5,
+        "label" : "MCC",
+        "unit"  : "",
+        "factor" : 1.0,
     }, 
 
-
-
+    "hcc" : {
+        "levels": np.linspace(-1, 1, 11) * 0.5,
+        "levels_std": np.linspace(0, 1, 11) * 0.5,
+        "label" : "HCC",
+        "unit"  : "",
+        "factor" : 1.0,
+    }, 
 
 
 }
@@ -219,8 +324,8 @@ def student_t_test(mean1, std1, nobs1, mean2, std2, nobs2):
 
 cent_lon = 180.0
 
-plot_lon_l = 120.0
-plot_lon_r = 240.0
+plot_lon_l = 100.0
+plot_lon_r = 260.0
 plot_lat_b = 10.0
 plot_lat_t = 60.0
 
@@ -259,6 +364,8 @@ cmap.set_over("green")
 cmap.set_under("yellow")
 
 mappables = [ None for i in range(len(varnames)) ]
+
+thumbnail_cnt = 0
 for i, mon in enumerate(t_months):
 
     _ax = ax[:, i]
@@ -278,7 +385,13 @@ for i, mon in enumerate(t_months):
             "Oct-Mar",
         ][m], size=20)
 
-    for i, varname in enumerate(varnames):
+    for j, varname in enumerate(varnames):
+
+
+        if varname == "BLANK":
+            
+            fig.delaxes(_ax[j])
+            continue
 
         _mean1 = ds_stat["AR"][varname][m, :, :, 0].to_numpy()
         _mean2 = ds_stat["ARf"][varname][m, :, :, 0].to_numpy()
@@ -294,33 +407,80 @@ for i, mon in enumerate(t_months):
         _diff = ds_stat["AR"][varname][m, :, :, 0].to_numpy()
         #_diff = ((ds_stat["AR"][varname][m, :, :, 0] - ds_stat["clim"][varname][m, :, :, 0])).to_numpy()
 
-        _dot = _diff * 0 
-        _significant_idx =  (pvals <= 0.05) 
-
-        _dot[ _significant_idx                 ] = 0.75
-        _dot[ np.logical_not(_significant_idx) ] = 0.25
-
-        # Remove insignificant data
-        #_diff[np.logical_not(_significant_idx)] = np.nan
 
         plot_info = plot_infos[varname]
 
-        mappables[i] = _ax[i].contourf(coords["lon"], coords["lat"], _diff / plot_info["factor"], levels=plot_info["levels"], cmap=cmap, extend="both", transform=proj_norm)
+        _diff_all = _diff
 
-        cs = _ax[i].contourf(coords["lon"], coords["lat"], _dot, colors='none', levels=[0, 0.5, 1], hatches=[None, ".."], transform=proj_norm)
+        if varname in ["IWV", "IVT"]:
+
+            _plot = ds_stat["AR"][varname][m, :, :, 0].to_numpy() + ds_stat["clim"][varname][m, :, :, 0].to_numpy()
+            mappables[j] = _ax[j].contourf(coords["lon"], coords["lat"], _plot / plot_info["factor"], levels=plot_info["levels"], cmap="GnBu", extend="max", transform=proj_norm)
+
+        else:
+            mappables[j] = _ax[j].contourf(coords["lon"], coords["lat"], _diff_all / plot_info["factor"], levels=plot_info["levels"], cmap=cmap, extend="both", transform=proj_norm)
+       
+        if args.add_thumbnail_title :
+            _ax[j].set_title("(%s)" % ("abcdefghijklmnopqrstuvwxyz"[thumbnail_cnt + args.thumbnail_offset]))
+            thumbnail_cnt += 1
+
         
 
-        for _, collection in enumerate(cs.collections):
-            collection.set_edgecolor((.2, .2, .2))
-            collection.set_linewidth(0.)
 
+        # Plot the AR frequency contours
         _ARfreq = ARfreq[m, :, :]
-        #_ARfreq[_ARfreq >= 0.3] = 0.75
-        #_ARfreq[_ARfreq <  0.3] = 0.25
-        #_ax[i].contourf(coords["lon"], coords["lat"], ARfreq[m, :, :], colors='none', levels=[0, 0.5, 1], hatches=[None, ".."], transform=proj_norm)
-        _ax[i].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.3, ], colors="k", linestyles='--',  linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
-        _ax[i].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.4, ], colors="k", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
-       
+
+        """
+        _ax[j].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.3, ], colors="k", linestyles='--',  linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+        _ax[j].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.4, ], colors="k", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+ 
+        """
+
+        if varname == "SFCWIND":
+            
+            readjust_U = (ds_stat["AR"]["u10"][m, :, :, 0] / np.cos(np.deg2rad(coords["lat"]))).to_numpy()
+            readjust_V =  ds_stat["AR"]["v10"][m, :, :, 0].to_numpy()
+            _ax[j].streamplot(coords["lon"], coords["lat"], readjust_U, readjust_V, transform=proj_norm, density=1, color="dodgerblue")
+            
+
+
+        if not args.no_sig:
+            # Plot the hatch to denote significant data
+            _dot = _diff * 0 
+            _significant_idx =  (pvals <= 0.05) 
+
+            _dot[ _significant_idx                 ] = 0.75
+            _dot[ np.logical_not(_significant_idx) ] = 0.25
+
+            # Remove insignificant data
+            #_diff[np.logical_not(_significant_idx)] = np.nan
+
+            cs = _ax[j].contourf(coords["lon"], coords["lat"], _dot, colors='none', levels=[0, 0.5, 1], hatches=[None, "."], transform=proj_norm)
+
+            # Remove the contour lines for hatches 
+            for _, collection in enumerate(cs.collections):
+                collection.set_edgecolor((.2, .2, .2))
+                collection.set_linewidth(0.)
+
+        # Plot the standard deviation
+        std = ds_stat["AR"][varname][m, :, :, 1] / plot_info["factor"]
+        cs = _ax[j].contour(coords["lon"], coords["lat"], std, levels=plot_info["levels_std"], colors="k", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+
+
+        fmt = "%d" if np.all( np.abs( np.array(plot_info["levels_std"]) % 1 ) < 1e-5 ) else "%.1f"
+        _ax[j].clabel(cs, fmt=fmt)
+
+
+
+        #std = ds_stat["AR+ARf"][varname][m, :, :, 1] / plot_info["factor"]
+        #cs = _ax[j].contour(coords["lon"], coords["lat"], std, levels=plot_info["levels_std"], colors="yellow", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+
+
+        #fmt = "%d" if np.all( np.array(plot_info["levels_std"]) % 1 == 0) else "%.1f"
+        #_ax[j].clabel(cs, fmt=fmt)
+
+
+
     for __ax in _ax: 
 
         __ax.set_global()
@@ -345,10 +505,17 @@ for i, mon in enumerate(t_months):
 
 
 
-for i in range(len(mappables)):
+for i, mappable in enumerate(mappables):
+   
+    if mappable is None:
+        continue 
+
     cax = tool_fig_config.addAxesNextToAxes(fig, ax[i, -1], "right", thickness=0.03, spacing=0.05)
-    cb = plt.colorbar(mappables[i], cax=cax, orientation="vertical", pad=0.00)
-    cb.ax.set_ylabel(" %s [ $ 1 \\times 10^{-6} \\, \\mathrm{K} \\, / \\, \\mathrm{s} $ ]" % (plot_infos[varnames[i]]["label"],))
+    cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
+
+    plot_info = plot_infos[varnames[i]]
+    unit_str = "" if plot_info["unit"] == "" else " [ %s ]" % (plot_info["unit"],)
+    cb.ax.set_ylabel("%s%s" % (plot_info["label"], unit_str))
 
 
 if not args.no_display:
