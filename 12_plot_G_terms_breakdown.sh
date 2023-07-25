@@ -40,7 +40,7 @@ for suffix in "" ; do
         --no-display" &
 
     wait
-    break
+    
     wm_str="7"
 
     count=$(( count + 1 ))

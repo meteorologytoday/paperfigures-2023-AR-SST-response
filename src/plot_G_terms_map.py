@@ -69,7 +69,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ttl}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     },
 
@@ -77,7 +77,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sfc}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -85,7 +85,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ocn}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -93,7 +93,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{vdiff}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -101,7 +101,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{hdiff}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -110,7 +110,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ent}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -118,7 +118,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -127,7 +127,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sw}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -135,7 +135,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{lw}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -143,7 +143,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{sen}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -151,7 +151,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{lat}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -159,23 +159,23 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{fwf}} $",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLHADVT_g" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
-        "label" : "Geostrophic HADV",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "label" : "Geo HADV",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
     "MLHADVT_ag" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
-        "label" : "Ageostrophic HADV",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "label" : "Ageo HADV",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -183,7 +183,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "Ent ADV",
-        "unit"  : "$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
 
@@ -234,7 +234,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "LCC",
-        "unit"  : "",
+        "unit"  : "[ None ]",
         "factor" : 1.0,
     }, 
 
@@ -242,7 +242,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "MCC",
-        "unit"  : "",
+        "unit"  : "[ None ]",
         "factor" : 1.0,
     }, 
 
@@ -250,7 +250,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "HCC",
-        "unit"  : "",
+        "unit"  : "[ None ]",
         "factor" : 1.0,
     }, 
 
@@ -340,7 +340,7 @@ figsize, gridspec_kw = tool_fig_config.calFigParams(
     wspace = 1.0,
     hspace = 0.5,
     w_left = 1.0,
-    w_right = 1.5,
+    w_right = 2.2,
     h_bottom = 1.0,
     h_top = 1.0,
     ncol = len(t_months),
@@ -500,8 +500,8 @@ for i, mon in enumerate(t_months):
         
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 20, 'color': 'black'}
-        gl.ylabel_style = {'size': 20, 'color': 'black'}
+        gl.xlabel_style = {'size': 15, 'color': 'black'}
+        gl.ylabel_style = {'size': 15, 'color': 'black'}
 
 
 
@@ -515,7 +515,7 @@ for i, mappable in enumerate(mappables):
 
     plot_info = plot_infos[varnames[i]]
     unit_str = "" if plot_info["unit"] == "" else " [ %s ]" % (plot_info["unit"],)
-    cb.ax.set_ylabel("%s%s" % (plot_info["label"], unit_str), size=30)
+    cb.ax.set_ylabel("%s\n%s" % (plot_info["label"], unit_str), size=25)
 
 
 if not args.no_display:

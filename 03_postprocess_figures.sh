@@ -24,9 +24,9 @@ convert $fig_dir/G_terms_atmocn_2.png \
 convert \
     \(  \
         \( $fig_dir/AR_freq_std.png -gravity South -chop 0x100 \)  \
-        \( $fig_dir/AR_EOF.png -gravity North -chop 0x200 -resize 90% \)  -gravity Northwest -append \
-    \) -gravity East -chop 200x0 \(                               \
-        $fig_dir/atmsfc_2.png -gravity West -chop 100x0          \
+        \( $fig_dir/AR_EOF.png -gravity North -chop 0x200 -resize 90% \) -gravity East -chop 100x0  -gravity Northwest -append \
+    \) -gravity East \(                               \
+        $fig_dir/atmsfc_2.png -gravity West -chop 50x0          \
     \) -gravity Northwest +append       \
      $fig_dir/merged-EOF-forcing.png
 
