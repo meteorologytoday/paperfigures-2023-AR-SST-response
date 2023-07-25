@@ -7,6 +7,8 @@ import argparse
 from datetime import (timedelta, datetime, timezone)
 from scipy.stats import ttest_ind_from_stats
 import numpy as np
+import pandas as pd
+import tool_fig_config
 
 parser = argparse.ArgumentParser(
                     prog = 'plot_skill',
@@ -17,72 +19,96 @@ parser.add_argument('--input-dir', type=str, help='Input file', required=True)
 parser.add_argument('--lat-rng', type=float, nargs=2, help='Latitude range', required=True)
 parser.add_argument('--lon-rng', type=float, nargs=2, help='Longitude range', required=True)
 parser.add_argument('--output', type=str, help='Output file', default="")
+parser.add_argument('--AR-algo', type=str, help='Algorithm of making AR object', default="ANOM_LEN")
 parser.add_argument('--title', type=str, help='Output title', default="")
 parser.add_argument('--title-style', type=str, help='Output title', default="folder", choices=["folder", "latlon"])
+parser.add_argument('--varnames', type=str, help='varnames you want to do stats. X and Y.', nargs=2)
 parser.add_argument('--no-display', action="store_true")
 args = parser.parse_args()
 print(args)
 
 
 print("Loading data...")
-ds_stat = {}
-for k in ["AR",]:
-    ds_stat[k] = xr.open_dataset("%s/stat_%s.nc" % (args.input_dir, k)).sel(time="Oct-Mar", stat="mean")
+
+engine='netcdf4'
+ds_anom = xr.open_dataset("%s/anom.nc" % (args.input_dir,), engine=engine)
+ds_ttl  = xr.open_dataset("%s/ttl.nc"  % (args.input_dir,), engine=engine)
    
-    ds = ds_stat[k]
-    
-    MLG_res2 = (ds['dMLTdt'] - (
-          ds['MLG_frc']
-        + ds['MLG_nonfrc']
-        + ds['MLG_rescale']
-    )).rename('MLG_res2')
-
-    print("RESIDUE: ", np.amax(np.abs(ds['MLG_residue'])))
-
-    ds = xr.merge(
-        [
-            ds,
-            MLG_res2,
-        ]
-    )
-
-    ds_stat[k] = ds
-
-    ds = None 
-
-    
-
 args.lon_rng = np.array(args.lon_rng) % 360.0
 
 print("Selecting data range : lat = [%.2f , %.2f], lon = [%.2f, %.2f]" % (*args.lat_rng, *args.lon_rng))
+print(ds_anom.coords["lat"].to_numpy())
+print(ds_anom.coords["lon"].to_numpy())
+latlon_sel = (
+    (ds_anom.coords["lat"] >= args.lat_rng[0])
+    & (ds_anom.coords["lat"] <= args.lat_rng[1])
+    & (ds_anom.coords["lon"] >= args.lon_rng[0])
+    & (ds_anom.coords["lon"] <= args.lon_rng[1])
+)
 
-for k, _var in ds_stat.items():
-    latlon_sel = (
-        (_var.coords["lat"] >= args.lat_rng[0])
-        & (_var.coords["lat"] <= args.lat_rng[1])
-        & (_var.coords["lon"] >= args.lon_rng[0])
-        & (_var.coords["lon"] <= args.lon_rng[1])
-    )
+AR_sel = ds_ttl['map_%s' % (args.AR_algo,)] > 0
+extra_sel = (ds_anom.time < pd.Timestamp('2016-05-01')) & (ds_anom.time > pd.Timestamp('2014-09-01')) 
 
-    ds_stat[k] = _var.where(latlon_sel)
+total_sel = latlon_sel & AR_sel #& extra_sel
 
+print("Number of selected data points: %d " % ( np.sum(total_sel), ) )
 
-factor = 0.000001
-ds = ds_stat["AR"]
-data_x = ds["MLG_frc"].to_numpy() / factor
-data_y = ds["MLG_nonfrc"].to_numpy() / factor
+ds_anom = ds_anom.where(total_sel)
+
+factor = 1e-6
+
+#varname_x = "dMLTdt"
+#varname_y = "MLG_frc"
+
+#varname_x = "MLG_frc"
+#varname_y = "MLG_nonfrc"
+
+varname_x = args.varnames[0]
+varname_y = args.varnames[1]
+
+print("Varname X: ", varname_x)
+print("Varname Y: ", varname_y)
+
+data_x = ds_anom[varname_x].to_numpy().flatten() / factor
+data_y = ds_anom[varname_y].to_numpy().flatten() / factor
+
+valid_idx = np.isfinite(data_x) & np.isfinite(data_y)
+data_x = data_x[valid_idx]
+data_y = data_y[valid_idx]
+
+#data_x = np.array([-1, -0.5, 0, .1, .2, .5])
+#data_y = np.array([-.5, -.21, 1e-3, 0.045, 0.1, 0.239])
+
+corr_coe = np.corrcoef(data_x, data_y)
+coe = np.polyfit(data_x, data_y, deg=1)
+print("corr_coe = ", corr_coe)
+print("coe = ", coe)
+
+#fit_slope, fit_const = np.linalg.lstsq(A, y, rcond=None)[0]
+
 
 print(data_x.shape)
 
-edges_x = np.linspace(-1, 1, 51)
-edges_y = np.linspace(-1, 1, 52)
+edges_x = np.linspace(-1, 1, 71) * 1.5
+edges_y = np.linspace(-1, 1, 72) * 1.5
 
-hist, edges_x, edges_y = np.histogram2d(data_x, data_y, bins=[edges_x, edges_y])
+hist, edges_x, edges_y = np.histogram2d(data_x, data_y, bins=[edges_x, edges_y], density=True)
 
 mid_x = ( edges_x[:-1] + edges_x[1:] ) / 2
 mid_y = ( edges_y[:-1] + edges_y[1:] ) / 2
 
+hist_std = np.std(hist)
+hist_color_lev_max = hist_std * 4
 print("Maximum of hist : ", np.amax(hist))
+print("Std dev hist : ", hist_std)
+print("Decide the max = ", hist_color_lev_max)
+
+# compute mass centers
+mass_center = np.zeros_like(mid_x)
+for i in range(len(mid_x)):
+    mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
+
+
 
 """
 if args.breakdown == "atmocn":
@@ -99,21 +125,21 @@ plot_infos = {
     
     "dMLTdt" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{ttl}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ttl}} $",
         "color" : "gray",
         "hatch" : '///',
     },
 
     "MLG_frc" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{frc}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sfc}} $",
         "color" : "orangered",
         "hatch" : '///',
     }, 
 
     "MLG_nonfrc" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{nfrc}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ocn}} $",
         "color" : "dodgerblue",
         "hatch" : '///',
     }, 
@@ -178,8 +204,8 @@ if args.no_display is False:
     mpl.use('TkAgg')
 else:
     mpl.use('Agg')
-    #mpl.rc('font', size=20)
-    #mpl.rc('axes', labelsize=15)
+    mpl.rc('font', size=15)
+    mpl.rc('axes', labelsize=15)
      
  
   
@@ -192,7 +218,25 @@ from scipy.stats import linregress
 
 print("done")
 
-fig, ax = plt.subplots(1, 1, figsize=(6, 8), constrained_layout=True)# gridspec_kw = dict(hspace=0.3, wspace=0.4))
+figsize, gridspec_kw = tool_fig_config.calFigParams(
+    w = 3,
+    h = 3,
+    wspace = 1.0,
+    hspace = 1.0,
+    w_left = 1.0,
+    w_right = 0.2,
+    h_bottom = 1.0,
+    h_top = 0.5,
+    ncol = 1,
+    nrow = 1,
+)
+
+
+subplot_kw = {
+    'aspect' : 1,
+}
+
+fig, ax = plt.subplots(1, 1, figsize=figsize, subplot_kw = subplot_kw, gridspec_kw = gridspec_kw)
 
 
 def pretty_latlon(lat, lon):
@@ -221,11 +265,35 @@ def pretty_latlon(lat, lon):
         return "%.2f%s" % (lat, lat_NS), "%.2f%s" % (lon, lon_EW)
 
 
-mappable = ax.contourf(mid_x, mid_y, hist, 20, cmap='hot_r', extend="both")
+hist[hist == 0] = np.nan
 
-ax.set_ylabel("[ $ 1 \\times 10^{-6} \\mathrm{K} \\, / \\, \\mathrm{s} $ ]")
-ax.set_xlabel("[ $ 1 \\times 10^{-6} \\mathrm{K} \\, / \\, \\mathrm{s} $ ]")
+mappable = ax.contourf(mid_x, mid_y, hist.transpose(), np.linspace(0, hist_color_lev_max, 11), cmap='bone_r', extend="max")
+#mappable = ax.imshow(hist.transpose(), cmap='bone_r', extend="max")
 
+
+ax.text(0.10, 0.95, '$ y = %.2f x %+.2f$, $R = %.2f$' % (coe[0], coe[1], corr_coe[1, 0],), transform=ax.transAxes, color='red', ha='left', va='top', size=12)
+
+x = np.linspace(-1, 1, 100) * .7
+#y = coe[0] * x**2 + coe[1] * x**1 + coe[2]
+y = coe[0] * x + coe[1]
+ax.plot(x, y, 'r--')
+ax.plot(mid_x, mass_center, linestyle=':', color="dodgerblue")
+
+plot_info_x = plot_infos[varname_x]
+plot_info_y = plot_infos[varname_y]
+
+ax.set_xlabel("%s [$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]" % (plot_info_x['label'],))
+ax.set_ylabel("%s [$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]" % (plot_info_y['label'],))
+
+
+ax.set_xlim(np.array([-1, 1]) * 1.5)
+ax.set_ylim(np.array([-1, 1]) * 1.5)
+
+#cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.03, spacing=0.05)
+#cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
+#cb.set_label('Density')
+#cb.set_ticks([])
+ax.set_title(args.title)
 
 if args.output != "":
    

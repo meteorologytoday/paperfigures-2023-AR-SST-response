@@ -3,8 +3,6 @@
 source 00_setup.sh
 
 AR_algo=ANOM_LEN
-#for suffix in "" "_500m"; do
-
 
 lib_root="/cw3e/mead/projects/csg102/t2hsu/MITgcm-diagnostics"
 run_root="/cw3e/mead/projects/csg102/t2hsu/AR_projects/project01/case04_ISOLATED_CYCLONE"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This is the program to generate the scatter plot of dT/dt
+
 source 00_setup.sh
 
 AR_algo=ANOM_LEN
@@ -7,8 +9,10 @@ AR_algo=ANOM_LEN
 nproc=2
 
 box_params=(
-    "OPEN_NPAC"  0 90 100 260
+    "OPEN_NPAC"  10 15 35 45
 )
+    
+#"OPEN_NPAC"  0 90 100 260
 
 nparams=5
 for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
@@ -22,15 +26,31 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
 
     for suffix in "" ; do
 
-        input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}/${AR_algo}
+        input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}
+        
         
         eval "python3 $src_dir/plot_dTdt_scatter_by_ARday_frc_nonfrc.py \\
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter.png \\
-            --title $box_name \\
+            --output $fig_dir/dTdt_scatter_a.png \\
+            --AR-algo $AR_algo \\
+            --title \"(a)\" \\
+            --varnames MLG_frc dMLTdt \\
+            --no-display \\
             " &
+
+        eval "python3 $src_dir/plot_dTdt_scatter_by_ARday_frc_nonfrc.py \\
+            --input-dir $input_dir \\
+            --lat-rng $lat_s $lat_n \\
+            --lon-rng $lon_w $lon_e \\
+            --output $fig_dir/dTdt_scatter_b.png \\
+            --AR-algo $AR_algo \\
+            --title \"(b)\" \\
+            --varnames MLG_frc MLG_nonfrc \\
+            --no-display \\
+            " &
+
 
         wait
 

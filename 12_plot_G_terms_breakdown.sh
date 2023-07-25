@@ -9,8 +9,9 @@ source 00_setup.sh
 AR_algo=ANOM_LEN
 
 
+#for suffix in "" "_500m"; do
 
-for suffix in "" "_500m"; do
+for suffix in "" ; do
 
     wm_str="1 2 3 4 5 6"
     count=1
@@ -19,7 +20,7 @@ for suffix in "" "_500m"; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames dMLTdt BLANK BLANK BLANK \\
+        --varnames dMLTdt BLANK SFCWIND MLD \\
         --output $fig_dir/G_terms_atmocn${suffix}_${count}.png \\
         --watermonths $wm_str \\
         --no-display" &
@@ -39,7 +40,7 @@ for suffix in "" "_500m"; do
         --no-display" &
 
     wait
-
+    break
     wm_str="7"
 
     count=$(( count + 1 ))

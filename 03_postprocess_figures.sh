@@ -14,10 +14,10 @@ convert $fig_dir/G_terms_atmocn_2.png \
         $fig_dir/G_terms_ocn_2.png \
         -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
 
-convert $fig_dir/G_terms_atmocn_500m_2.png \
-        $fig_dir/G_terms_atm_500m_2.png \
-        $fig_dir/G_terms_ocn_500m_2.png \
-        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown_500m.png
+#convert $fig_dir/G_terms_atmocn_500m_2.png \
+#        $fig_dir/G_terms_atm_500m_2.png \
+#        $fig_dir/G_terms_ocn_500m_2.png \
+#        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown_500m.png
 
 
 # Merging two sub-figures
@@ -37,6 +37,13 @@ convert \
      $fig_dir/merged-additional-analysis.png
 
 
+convert \
+    \( $fig_dir/dTdt_scatter_a.png \)  \
+    \( $fig_dir/dTdt_scatter_b.png \)  \
+    -gravity West +append       \
+     $fig_dir/merged-dTdt_scatter.png
+
+
 
 if [ ] ; then
 # This adds in the EOF timeseries. I think it is okay to just write the
@@ -54,10 +61,11 @@ fi
 
 name_pairs=(
     merged-EOF-forcing.png                 fig01.png
-    merged-G_terms_map_breakdown.png       fig02.png
-    merged-additional-analysis.png         fig03.png
-    G_terms_atm_1.png                      fig04.png
-    G_terms_ocn_1.png                      fig05.png
+    merged-dTdt_scatter.png                fig02.png
+    merged-G_terms_map_breakdown.png       fig03.png
+    merged-additional-analysis.png         fig04.png
+    G_terms_atm_1.png                      fig05.png
+    G_terms_ocn_1.png                      fig06.png
     G_terms_atmocn_1.png                   figS01.png
 )
 
