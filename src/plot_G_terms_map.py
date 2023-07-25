@@ -265,8 +265,8 @@ if args.no_display is False:
     mpl.use('TkAgg')
 else:
     mpl.use('Agg')
-    #mpl.rc('font', size=20)
-    #mpl.rc('axes', labelsize=15)
+    mpl.rc('font', size=15)
+    mpl.rc('axes', labelsize=15)
      
  
   
@@ -383,7 +383,7 @@ for i, mon in enumerate(t_months):
             "Feb",
             "Mar",
             "Oct-Mar",
-        ][m], size=20)
+        ][m], size=30)
 
     for j, varname in enumerate(varnames):
 
@@ -500,8 +500,8 @@ for i, mon in enumerate(t_months):
         
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 10, 'color': 'black'}
-        gl.ylabel_style = {'size': 10, 'color': 'black'}
+        gl.xlabel_style = {'size': 20, 'color': 'black'}
+        gl.ylabel_style = {'size': 20, 'color': 'black'}
 
 
 
@@ -515,7 +515,7 @@ for i, mappable in enumerate(mappables):
 
     plot_info = plot_infos[varnames[i]]
     unit_str = "" if plot_info["unit"] == "" else " [ %s ]" % (plot_info["unit"],)
-    cb.ax.set_ylabel("%s%s" % (plot_info["label"], unit_str))
+    cb.ax.set_ylabel("%s%s" % (plot_info["label"], unit_str), size=30)
 
 
 if not args.no_display:

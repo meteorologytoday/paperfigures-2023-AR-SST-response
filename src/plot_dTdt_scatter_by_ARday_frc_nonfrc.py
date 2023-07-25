@@ -106,7 +106,12 @@ print("Decide the max = ", hist_color_lev_max)
 # compute mass centers
 mass_center = np.zeros_like(mid_x)
 for i in range(len(mid_x)):
-    mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
+    wgt = hist[i, :]**1
+    if np.all(wgt == 0):
+        mass_center[i] = np.nan
+
+    else:
+        mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
 
 
 
