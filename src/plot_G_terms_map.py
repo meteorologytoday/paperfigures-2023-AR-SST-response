@@ -22,6 +22,7 @@ parser.add_argument('--thumbnail-offset', type=int, help='Output file', default=
 parser.add_argument('--add-thumbnail-title', action="store_true")
 parser.add_argument('--no-display', action="store_true")
 parser.add_argument('--no-sig', action="store_true")
+parser.add_argument('--mark-box', type=str, nargs="*", default=[], choices=["strong_marine_warming"])
 
 args = parser.parse_args()
 print(args)
@@ -471,6 +472,17 @@ for i, mon in enumerate(t_months):
         _ax[j].clabel(cs, fmt=fmt)
 
 
+        if ("strong_marine_warming" in args.mark_box) and (i == 0) and (j == 0):
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Add Box !!!!!!!!!!!!!!!!!!!!!!!!!!")
+            lon_rng = np.array([-135, -120])  % 360
+            lat_rng = np.array([15, 25])
+            _ax[j].add_patch(
+                Rectangle(
+                    (lon_rng[0], lat_rng[0]), lon_rng[1] - lon_rng[0], lat_rng[1] - lat_rng[0],
+                    linewidth=2, edgecolor="cyan", facecolor='none', transform=proj_norm,
+                )
+            )
+            
 
         #std = ds_stat["AR+ARf"][varname][m, :, :, 1] / plot_info["factor"]
         #cs = _ax[j].contour(coords["lon"], coords["lat"], std, levels=plot_info["levels_std"], colors="yellow", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)

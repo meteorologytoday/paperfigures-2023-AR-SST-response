@@ -10,6 +10,7 @@ nproc=2
 
 box_params=(
     "OPEN_NPAC"  30 40 200 210
+    "ALL_EXTRATROPICAL_NPAC"  30 60 100 240
 )
     
 #"OPEN_NPAC"  0 90 100 260
@@ -33,7 +34,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_a.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_a.png \\
             --AR-algo $AR_algo \\
             --title \"(a)\" \\
             --varnames MLG_frc dMLTdt \\
@@ -44,7 +45,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_b.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_b.png \\
             --AR-algo $AR_algo \\
             --title \"(b)\" \\
             --varnames MLG_frc MLG_nonfrc \\

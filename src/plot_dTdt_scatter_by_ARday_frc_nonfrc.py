@@ -300,6 +300,8 @@ ax.set_ylim(np.array([-1, 1]) * 1.5)
 #cb.set_ticks([])
 ax.set_title(args.title)
 
+ax.grid(alpha=0.3)
+
 if args.output != "":
    
     print("Output filename: %s" % (args.output,))

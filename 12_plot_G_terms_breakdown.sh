@@ -52,6 +52,7 @@ for suffix in "" ; do
         --output $fig_dir/G_terms_atmocn${suffix}_${count}.png \\
         --watermonths $wm_str \\
         --add-thumbnail-title \\
+        --mark-box strong_marine_warming \\
         --no-display" &
 
 

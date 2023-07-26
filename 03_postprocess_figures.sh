@@ -38,8 +38,8 @@ convert \
 
 
 convert \
-    \( $fig_dir/dTdt_scatter_a.png \)  \
-    \( $fig_dir/dTdt_scatter_b.png \)  \
+    \( $fig_dir/dTdt_scatter_ALL_EXTRATROPICAL_NPAC_a.png \)  \
+    \( $fig_dir/dTdt_scatter_ALL_EXTRATROPICAL_NPAC_b.png \)  \
     -gravity West +append       \
      $fig_dir/merged-dTdt_scatter.png
 
