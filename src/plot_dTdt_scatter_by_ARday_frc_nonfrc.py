@@ -89,8 +89,8 @@ print("coe = ", coe)
 
 print(data_x.shape)
 
-edges_x = np.linspace(-1, 1, 71) * 1.5
-edges_y = np.linspace(-1, 1, 72) * 1.5
+edges_x = np.linspace(-1, 1, 101) * 1.5
+edges_y = np.linspace(-1, 1, 101) * 1.5
 
 hist, edges_x, edges_y = np.histogram2d(data_x, data_y, bins=[edges_x, edges_y], density=True)
 
@@ -309,13 +309,16 @@ ax.set_ylabel("%s [$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]" % (plot
 ax.set_xlim(np.array([-1, 1]) * 1.5)
 ax.set_ylim(np.array([-1, 1]) * 1.5)
 
+ax.set_yticks([-1, 0, 1])
+ax.set_xticks([-1, 0, 1])
+
 #cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.03, spacing=0.05)
 #cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
 #cb.set_label('Density')
 #cb.set_ticks([])
 ax.set_title(args.title)
 
-ax.grid(alpha=0.3)
+ax.grid(True, alpha=0.3, which="major")
 
 if args.output != "":
    
