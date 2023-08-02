@@ -105,13 +105,25 @@ print("Decide the max = ", hist_color_lev_max)
 
 # compute mass centers
 mass_center = np.zeros_like(mid_x)
+uncertainty_lower = np.zeros_like(mid_x)
+uncertainty_upper = np.zeros_like(mid_x)
 for i in range(len(mid_x)):
     wgt = hist[i, :]**1
     if np.all(wgt == 0):
         mass_center[i] = np.nan
+        uncertainty_upper[i] = np.nan
+        uncertainty_lower[i] = np.nan
 
     else:
-        mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
+
+        #mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
+
+
+        idx = (edges_x[i] < data_x) & ( data_x <= edges_x[i+1] )
+        q = np.quantile(data_y[idx], [0.25, 0.50, 0.75])
+        uncertainty_lower[i] = q[0]
+        mass_center[i] = q[1]
+        uncertainty_upper[i] = q[2]
 
 
 
@@ -272,7 +284,7 @@ def pretty_latlon(lat, lon):
 
 hist[hist == 0] = np.nan
 
-mappable = ax.contourf(mid_x, mid_y, hist.transpose(), np.linspace(0, hist_color_lev_max, 11), cmap='bone_r', extend="max")
+mappable = ax.contourf(mid_x, mid_y, hist.transpose(), np.linspace(0, hist_color_lev_max, 11), cmap='bone_r', extend="max", zorder=1)
 #mappable = ax.imshow(hist.transpose(), cmap='bone_r', extend="max")
 
 
@@ -282,7 +294,10 @@ x = np.linspace(-1, 1, 100) * .7
 #y = coe[0] * x**2 + coe[1] * x**1 + coe[2]
 y = coe[0] * x + coe[1]
 ax.plot(x, y, 'r--')
-ax.plot(mid_x, mass_center, linestyle=':', color="dodgerblue")
+ax.plot(mid_x, mass_center, linestyle=':', color="dodgerblue", zorder=20)
+
+# plot uncertainty
+ax.fill_between(mid_x, uncertainty_lower, uncertainty_upper, zorder=2, alpha=0.2, facecolor="#888888", edgecolor="#000000")
 
 plot_info_x = plot_infos[varname_x]
 plot_info_y = plot_infos[varname_y]
