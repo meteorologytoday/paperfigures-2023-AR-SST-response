@@ -338,6 +338,7 @@ for s, sname in enumerate(["clim", "AR"]):
             _ax.plot(
                 [x_pos[m] + i*bar_width] * 2,
                 np.array([_error_bar_lower[m], _error_bar_upper[m]]) + _offset[m],
+                color="black",
                 zorder=99,
             )
 

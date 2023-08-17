@@ -85,8 +85,16 @@ cs = ax.contour(coords["lon"], coords["lat"], AR_std, levels=std_levels, colors=
 
 ax.clabel(cs, fmt="%d")
 
-ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
-ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
+ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+
+# Add a box over AR active region
+ax.add_patch(
+    Rectangle(
+        (150, 30), 60, 10,
+        linewidth=2, edgecolor="red", facecolor='none', transform=proj_norm,
+    zorder=99)
+)
 
 
 ax.set_global()

@@ -1,20 +1,18 @@
 #!/bin/bash
 
+# This is the program to generate the scatter plot of dT/dt
+
 source 00_setup.sh
 
 AR_algo=ANOM_LEN
 
+nproc=2
+
 box_params=(
-    "AR_REGION"  30 40 150 210
-    "AR_REGION_W"  30 40 150 160
-    "AR_REGION_E"  30 40 200 210
+    "ALL_NPAC"  10 60 100 240
 )
-#    "OPEN_NPAC"  30 50 140 220
-#    "CA_COASTAL" 35 50 230 240
-#    "OPEN_NEPAC" 30 50 180 220
-#)
-
-
+    
+#"OPEN_NPAC"  0 90 100 260
 
 nparams=5
 for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
@@ -28,17 +26,16 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
 
     for suffix in "" ; do
 
-        count=1
-
-        input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}/${AR_algo}
+        input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}
         
-        eval "python3 $src_dir/plot_Gterms_latlon_range.py \\
+        
+        eval "python3 $src_dir/plot_dTdt_stat_decomp.py \\
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/Gterms_${box_name}_atmocn${suffix}_${count}.png \\
-            --title $box_name \\
-            --breakdown atmocn \\
+            --output $fig_dir/dTdt_stat_${box_name}_a.png \\
+            --AR-algo $AR_algo \\
+            --title \"\" \\
             --no-display \\
             " &
 

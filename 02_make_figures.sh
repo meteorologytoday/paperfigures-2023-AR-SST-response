@@ -14,9 +14,12 @@ plot_codes=(
     $sh 13_plot_atm_frc.sh "BLANK"
     $sh 14_plot_additional_maps.sh "BLANK"
     $sh 22_plot_scatter.sh "BLANK"
+    $sh 21_plot_Gterms_breakdown_latlon_box.sh "BLANK"
 )
 
-
+#plot_codes=(
+#    $py $src_dir/plot_AR_freq_with_std.py "--input $diagdata_dir/AR_interannual_statistics_ANOM_LEN_${yrng_str}.nc --output $fig_dir/AR_freq_std.png --no-display"
+#) 
 
 mkdir $fig_dir
 
