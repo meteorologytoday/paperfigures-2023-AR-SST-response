@@ -93,8 +93,8 @@ print("coe = ", coe)
 
 print(data_x.shape)
 
-edges_x = np.linspace(-1, 1, 101) * 1.5
-edges_y = np.linspace(-1, 1, 101) * 1.5
+edges_x = np.arange(-1.5, 1.52, 0.02)#np.linspace(-1, 1, 101) * 1.5
+edges_y = np.arange(-1.5, 1.52, 0.02)#np.linspace(-1, 1, 101) * 1.5
 
 hist, edges_x, edges_y = np.histogram2d(data_x, data_y, bins=[edges_x, edges_y], density=True)
 
@@ -102,7 +102,7 @@ mid_x = ( edges_x[:-1] + edges_x[1:] ) / 2
 mid_y = ( edges_y[:-1] + edges_y[1:] ) / 2
 
 hist_std = np.std(hist)
-hist_color_lev_max = hist_std * 4
+hist_color_lev_max = 1.5 #hist_std * 4
 print("Maximum of hist : ", np.amax(hist))
 print("Std dev hist : ", hist_std)
 print("Decide the max = ", hist_color_lev_max)
@@ -125,10 +125,17 @@ for i in range(len(mid_x)):
 
         idx = (edges_x[i] < data_x) & ( data_x <= edges_x[i+1] )
         q = np.quantile(data_y[idx], [0.25, 0.50, 0.75])
-        uncertainty_lower[i] = q[0]
+        std = np.std(data_y[idx])
+
         #mass_center[i] = q[1]
-        mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
-        uncertainty_upper[i] = q[2]
+        #mass_center[i] = np.average(mid_y, weights=hist[i, :]**1)
+        mass_center[i] = np.mean(data_y[idx])#, weights=hist[i, :]**1)
+        #uncertainty_lower[i] = q[0]
+        #uncertainty_upper[i] = q[2]
+
+        uncertainty_lower[i] = mass_center[i] - std
+        uncertainty_upper[i] = mass_center[i] + std
+
 
 
 
@@ -251,7 +258,7 @@ figsize, gridspec_kw = tool_fig_config.calFigParams(
     wspace = 1.0,
     hspace = 1.0,
     w_left = 1.0,
-    w_right = 0.2,
+    w_right = 1.0,
     h_bottom = 1.0,
     h_top = 0.5,
     ncol = 1,
@@ -322,9 +329,9 @@ ax.set_ylim(np.array([-1, 1]) * 1.5)
 ax.set_yticks([-1, 0, 1])
 ax.set_xticks([-1, 0, 1])
 
-#cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.03, spacing=0.05)
-#cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
-#cb.set_label('Density')
+cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.03, spacing=0.05)
+cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
+cb.set_label('PDF [$ \\left( 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s}\\right)^{-2} $]')
 #cb.set_ticks([])
 ax.set_title(args.title)
 

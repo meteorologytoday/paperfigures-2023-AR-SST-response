@@ -47,8 +47,8 @@ plot_months = [
 
 plot_months = [
     ( "Oct-Mar", 6 ),
-#    ( "Oct-Dec", 7 ),
-#    ( "Jan-Mar", 8 ),
+    ( "Oct-Dec", 7 ),
+    ( "Jan-Mar", 8 ),
     ( "Oct-Nov", 9 ),
     ( "Dec-Jan",10 ),
     ( "Feb-Mar",11 ),
@@ -218,19 +218,19 @@ plot_infos = {
 plot_ylim = {
 
     "atmocn" : {
-        "mean" : [-1.2, 0.2],
-        "anom" : [-0.6, 0.7],
+        "mean" : [-1.5, 1.5],
+        "anom" : [-0.7, 0.7],
     },
 
     "atm" : {
-        "mean" : [-1.2, 0.8],
+        "mean" : [-1.5, 1.5],
         "anom" : [-0.3, 0.7],
     },
 
     "ocn" : {
-        "mean" : [-0.6, 0.3],
+        "mean" : [-0.5, 0.5],
         #"anom" : [-0.06, 0.01],
-        "anom" : [-0.6, 0.3],
+        "anom" : [-0.5, 0.5],
     },
 
 }
@@ -298,9 +298,7 @@ if args.title == "":
 else:
     fig.suptitle(args.title)
 
-
-full_width = 0.8
-bar_width = full_width / len(plotted_varnames) #0.15
+bar_width = 0.8 / len(plotted_varnames) #0.15
 
 
 # Plot different decomposition
@@ -353,7 +351,6 @@ for s, sname in enumerate(["clim", "AR"]):
 
 
         # Plot error bars to different time
-        text_transform = transforms.blended_transform_factory(_ax.transData, _ax.transAxes)
         for m, idx in enumerate(selected_idx): 
             _ax.plot(
                 [x_pos[m] + i*bar_width] * 2,
@@ -361,9 +358,6 @@ for s, sname in enumerate(["clim", "AR"]):
                 color="black",
                 zorder=99,
             )
-
-            _ax.text(x_pos[m] + full_width/2 - bar_width/2, 0.95, "(%.1f)" % (N[m], ), transform=text_transform, va="top", ha="center")
-
             """
             result = ttest_ind_from_stats(
                 _anom_AR_data[m, 0], _anom_AR_data[m, 1], _anom_AR_data[m, 3],
@@ -387,20 +381,16 @@ for s, sname in enumerate(["clim", "AR"]):
     ))
 
     
-    _ax.set_xlim([-0.5, len(plot_months) + 1.0])
+    _ax.set_xlim([-0.5, 8.5])
 
     _ax.legend(loc="center right", borderpad=0.4, labelspacing=0.1)
 
-    if sname == "clim":
-        ylim = plot_ylim[args.breakdown]['mean']
-
-    elif sname == "AR": 
-        ylim = plot_ylim[args.breakdown]['anom']
-
-        
-    yticks = np.arange( np.ceil(ylim[0] / 0.2) * 0.2 , ylim[1], 0.2)
-    _ax.set_ylim(ylim)
-    _ax.set_yticks(yticks)
+    """    
+    if s in [0, ]:
+        _ax.set_ylim(plot_ylim[args.breakdown]['mean'])
+    else:
+        _ax.set_ylim(plot_ylim[args.breakdown]['anom'])
+    """
 
     _ax.grid(True)
     _ax.set_axisbelow(True)

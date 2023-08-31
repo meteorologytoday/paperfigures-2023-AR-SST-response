@@ -9,11 +9,13 @@ AR_algo=ANOM_LEN
 nproc=2
 
 box_params=(
-    "OPEN_NPAC"  30 40 200 210
-    "ALL_EXTRATROPICAL_NPAC"  30 60 100 240
     "ALL_NPAC"  10 60 100 240
 )
-    
+
+ 
+#    "OPEN_NPAC"  30 40 200 210
+#    "ALL_EXTRATROPICAL_NPAC"  30 60 100 240
+   
 #"OPEN_NPAC"  0 90 100 260
 
 nparams=5

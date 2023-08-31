@@ -31,6 +31,7 @@ print("Loading data...")
 
 engine='netcdf4'
 ds_anom = xr.open_dataset("%s/anom.nc" % (args.input_dir,), engine=engine)
+#ds_clim = xr.open_dataset("%s/clim.nc" % (args.input_dir,), engine=engine)
 ds_ttl  = xr.open_dataset("%s/ttl.nc"  % (args.input_dir,), engine=engine) # need the AR objects
    
 args.lon_rng = np.array(args.lon_rng) % 360.0
@@ -51,6 +52,7 @@ total_sel = latlon_sel & AR_sel
 print("Number of selected data points: %d " % ( np.sum(total_sel), ) )
 
 ds_anom = ds_anom.where(total_sel)
+#ds_clim = ds_clim.where(total_sel)
 
 ds_anom = xr.merge([
     ds_anom,
@@ -82,8 +84,11 @@ ds_anom = xr.merge([
 
 #print(data_x.shape)
 
-edges_x = np.linspace(-1, 1, 101) * 1.5
-edges_y = np.linspace(-1, 1, 101) * 1.5
+#edges_x = np.linspace(-1, 1, 101) * 1.5
+#edges_y = np.linspace(-1, 1, 101) * 1.5
+edges_x = np.arange(-1.5, 1.52, 0.02)#np.linspace(-1, 1, 101) * 1.5
+edges_y = np.arange(-1.5, 1.52, 0.02)#np.linspace(-1, 1, 101) * 1.5
+
 
 mid_x = ( edges_x[:-1] + edges_x[1:] ) / 2
 mid_y = ( edges_y[:-1] + edges_y[1:] ) / 2
@@ -108,6 +113,7 @@ shared_levels = np.linspace(-1, 1, 11) * 0.5
 plot_infos = {
     
     "dMLTdt" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ttl}} $",
         "color" : "gray",
@@ -115,6 +121,7 @@ plot_infos = {
     },
 
     "MLG_frc" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sfc}} $",
         "color" : "orangered",
@@ -122,6 +129,7 @@ plot_infos = {
     }, 
 
     "MLG_nonfrc" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ocn}} $",
         "color" : "dodgerblue",
@@ -129,62 +137,74 @@ plot_infos = {
     }, 
 
     "MLG_adv" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
     }, 
 
     "MLG_vdiff" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vdiff}} $",
     }, 
 
     "MLG_ent" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} $",
     }, 
 
     "MLG_hdiff" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{hdiff}} $",
     }, 
 
     "MLG_myres" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{res}} $",
     }, 
 
 
     "MLG_res2" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{res}} $",
     }, 
 
     "MLG_frc_sw" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{sw}} $",
     }, 
 
     "MLG_frc_lw" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{lw}} $",
     }, 
 
     "MLG_frc_lh" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{lh}} $",
     }, 
 
     "MLG_frc_sh" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{sh}} $",
     }, 
 
     "MLG_frc_fwf" : {
+        "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ G_{\mathrm{fwf}} $",
     }, 
 
     "dMLDdt" : {
+        "factor" : 1e-5,
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "label" : "$ w_e = \partial h / \partial t $",
     }, 
@@ -213,17 +233,20 @@ from scipy.stats import linregress
 
 print("done")
 
+
+ncol = 1
+nrow = 2
 figsize, gridspec_kw = tool_fig_config.calFigParams(
     w = 3,
-    h = 3,
+    h = [3, 1],
     wspace = 1.0,
     hspace = 1.0,
     w_left = 1.0,
     w_right = 0.2,
     h_bottom = 1.0,
     h_top = 0.5,
-    ncol = 1,
-    nrow = 1,
+    ncol = ncol,
+    nrow = nrow,
 )
 
 
@@ -231,7 +254,15 @@ subplot_kw = {
     'aspect' : 'auto',
 }
 
-fig, ax = plt.subplots(1, 1, figsize=figsize, subplot_kw = subplot_kw, gridspec_kw = gridspec_kw)
+fig, ax = plt.subplots(
+    nrow,
+    ncol, 
+    figsize=figsize,
+    subplot_kw = subplot_kw,
+    gridspec_kw = gridspec_kw,
+    sharex=True,
+    squeeze=False,
+)
 
 
 def pretty_latlon(lat, lon):
@@ -262,51 +293,84 @@ def pretty_latlon(lat, lon):
 
 varname_x = "MLG_frc"
 
-for (varname_y, lc, ls, lw, ) in [
-    ("MLG_nonfrc"   , "k", "-", 3),
-    ("MLG_adv"   , "green", "-", 2),
-    ("MLG_ent"   , "orangered", "-", 2),
-    ("MLG_vdiff" , "dodgerblue", "-", 2),
-    ("MLG_hdiff" , "gray", "-", 2),
-#    ("MLG_myres" , "yellow", ":"),
-]:
+
+for i, (title, plotted_variables) in enumerate([
+
+    (
+        "(a) Decomposition of $\\dot{\\overline{\\Theta}}_\\mathrm{ocn}$",
+        [
+            ("MLG_nonfrc"   , "k", "-", 3),
+            ("MLG_adv"   , "green", "-", 2),
+            ("MLG_ent"   , "orangered", "-", 2),
+            ("MLG_vdiff" , "dodgerblue", "-", 2),
+            ("MLG_hdiff" , "gray", "-", 2),
+        #    ("MLG_myres" , "yellow", ":"),
+        ],
+    ),
+
+    (
+        "(b) $ w_e = \\partial h / \\partial t $",
+        [
+            ("dMLDdt"   , "k", "-", 1),
+        ],
+    ),
 
 
-    plot_info_x = plot_infos[varname_x]
-    plot_info_y = plot_infos[varname_y]
+]):
+    _ax = ax[i, 0]
 
-    print("Varname Y: ", varname_y)
+    print("Plotting the %d-th axis." % (i, ))
 
-    data_x = ds_anom[varname_x].to_numpy().flatten() / 1e-6
-    data_y = ds_anom[varname_y].to_numpy().flatten() / 1e-6
-   
-    # Avoid data on land that is NaN 
-    valid_idx = np.isfinite(data_x) & np.isfinite(data_y)
-    data_x = data_x[valid_idx]
-    data_y = data_y[valid_idx]
+    for (varname_y, lc, ls, lw, ) in plotted_variables:
 
-    mid_x, approx_y = computeApprox(data_x, data_y, edges_x)
+        plot_info_x = plot_infos[varname_x]
+        plot_info_y = plot_infos[varname_y]
 
-    ax.plot(mid_x, approx_y, color=lc, linestyle=ls, label=plot_info_y['label'], linewidth=lw)
+        print("Varname Y: ", varname_y)
 
-ax.set_xlabel("%s [$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]" % (plot_info_x['label'],))
-ax.set_ylabel("[$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]")
+        data_x = ds_anom[varname_x].to_numpy().flatten() / plot_info_x['factor']
+        data_y = ds_anom[varname_y].to_numpy().flatten() / plot_info_y['factor']
+       
+        # Avoid data on land that is NaN 
+        valid_idx = np.isfinite(data_x) & np.isfinite(data_y)
+        data_x = data_x[valid_idx]
+        data_y = data_y[valid_idx]
 
-ax.set_xlim(np.array([-1, 1]) * 1.5)
-ax.set_ylim(np.array([-1, 1]) * 0.5)
+        mid_x, approx_y = computeApprox(data_x, data_y, edges_x)
 
-ax.set_xticks([-1, 0, 1])
+        _ax.plot(mid_x, approx_y, color=lc, linestyle=ls, label=plot_info_y['label'], linewidth=lw)
+
+    _ax.set_title(title)
+
+for _ax in ax.flatten():
+
+    _ax.set_xlabel("%s [$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]" % (plot_info_x['label'],))
+
+
+    _ax.grid(True, alpha=0.3, which="major")
+    _ax.set_xticks([-1, 0, 1])
+    _ax.set_xlim(np.array([-1, 1]) * 1.5)
+
+
+ax[0, 0].set_ylabel("[$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]")
+ax[0, 0].set_ylim([-0.80, 0.20])
+ax[0, 0].legend(ncols=2, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+
+ax[1, 0].set_ylabel("[$ 1 \\times 10^{-5} \\, \\mathrm{m} / \\mathrm{s} $]")
+ax[1, 0].set_ylim(np.array([-1, 1]) * 10.0)
+ax[1, 0].invert_yaxis()
+
 #ax.set_yticks([-1, 0, 1])
 
 
-ax.legend(ncols=2, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+
 #cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.03, spacing=0.05)
 #cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)
 #cb.set_label('Density')
 #cb.set_ticks([])
-ax.set_title(args.title)
+#_ax.set_title(args.title)
 
-ax.grid(True, alpha=0.3, which="major")
+
 
 if args.output != "":
    

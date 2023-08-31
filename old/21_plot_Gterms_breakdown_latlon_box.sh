@@ -5,7 +5,7 @@ source 00_setup.sh
 AR_algo=ANOM_LEN
 
 box_params=(
-    "AR_REGION"  30 40 150 210
+    "AR_REGION"    30 40 150 210
     "AR_REGION_W"  30 40 150 160
     "AR_REGION_E"  30 40 200 210
 )
@@ -15,7 +15,7 @@ box_params=(
 #)
 
 
-
+number_of_years=25
 nparams=5
 for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
 
@@ -33,6 +33,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
         input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}/${AR_algo}
         
         eval "python3 $src_dir/plot_Gterms_latlon_range.py \\
+            --number-of-years $number_of_years \\
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
@@ -41,6 +42,30 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --breakdown atmocn \\
             --no-display \\
             " &
+
+        eval "python3 $src_dir/plot_Gterms_latlon_range.py \\
+            --number-of-years $number_of_years \\
+            --input-dir $input_dir \\
+            --lat-rng $lat_s $lat_n \\
+            --lon-rng $lon_w $lon_e \\
+            --output $fig_dir/Gterms_${box_name}_atm${suffix}_${count}.png \\
+            --title $box_name \\
+            --breakdown atm \\
+            --no-display \\
+            " &
+
+        eval "python3 $src_dir/plot_Gterms_latlon_range.py \\
+            --number-of-years $number_of_years \\
+            --input-dir $input_dir \\
+            --lat-rng $lat_s $lat_n \\
+            --lon-rng $lon_w $lon_e \\
+            --output $fig_dir/Gterms_${box_name}_ocn${suffix}_${count}.png \\
+            --title $box_name \\
+            --breakdown ocn \\
+            --no-display \\
+            " &
+
+
 
         wait
 

@@ -7,6 +7,8 @@ from pathlib import Path
 import argparse
 from datetime import (timedelta, datetime, timezone)
 
+import tool_fig_config
+
 def correlate(x1, x2):
     
     if len(x1) != len(x2):
@@ -126,6 +128,29 @@ plot_lat_t = 60.0
 proj = ccrs.PlateCarree(central_longitude=cent_lon)
 proj_norm = ccrs.PlateCarree()
 
+figsize, gridspec_kw = tool_fig_config.calFigParams(
+    w = 4.8,
+    h = 2.0,
+    wspace = 1.0,
+    hspace = 0.5,
+    w_left = 1.0,
+    w_right = 1.0,
+    h_bottom = 1.0,
+    h_top = 0.25,
+    ncol = 1,
+    nrow = 2,
+)
+
+
+fig_EOF, ax = plt.subplots(
+    2, 1,
+    figsize=figsize,
+    subplot_kw=dict(projection=proj, aspect="auto"),
+    gridspec_kw=gridspec_kw,
+    constrained_layout=False,
+)
+
+"""
 fig_EOF, ax = plt.subplots(
     2, 1,
     figsize=(8, 8),
@@ -133,6 +158,7 @@ fig_EOF, ax = plt.subplots(
     gridspec_kw=dict(hspace=0.2, wspace=0.2),
     constrained_layout=False,
 )
+"""
 
 for i, _ax in enumerate(ax):
 
@@ -140,7 +166,7 @@ for i, _ax in enumerate(ax):
 
     coords = ds.coords
 
-    mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i), levels=np.linspace(-1, 1, 21) * 0.1, cmap="bwr", extend="both", transform=proj_norm)
+    mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i) * 10, levels=np.linspace(-1, 1, 21), cmap="bwr", extend="both", transform=proj_norm)
 
     _ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
     _ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
@@ -164,9 +190,10 @@ for i, _ax in enumerate(ax):
     gl.xlabel_style = {'size': 10, 'color': 'black'}
     gl.ylabel_style = {'size': 10, 'color': 'black'}
 
-        
-    #cb = plt.colorbar(mappable, ax=_ax, orientation="vertical", pad=0.01, shrink=0.5)
-    #cb.ax.set_ylabel("AR days per wateryear")
+ 
+    cax = tool_fig_config.addAxesNextToAxes(fig_EOF, _ax, "right", thickness=0.02, spacing=0.02)
+    cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00, ticks=[-1, 0, 1])
+    #cb.ax.set_ylabel("")
 
 
 # Second figure: timeseries

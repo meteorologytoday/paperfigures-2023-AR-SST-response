@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--input-dir', type=str, help='Input file', required=True)
 parser.add_argument('--output', type=str, help='Output file', default="")
 parser.add_argument('--varnames', type=str, nargs="+", help='Output file', default=["dMLTdt", "MLG_frc", "MLG_nonfrc"])
-parser.add_argument('--time', type=str, nargs="+", help='Output file')
+parser.add_argument('--watermonths', type=int, nargs="+", help='Output file', default=[1, 2, 3, 4, 5, 6])
 parser.add_argument('--thumbnail-offset', type=int, help='Output file', default=0)
 parser.add_argument('--add-thumbnail-title', action="store_true")
 parser.add_argument('--no-display', action="store_true")
@@ -27,10 +27,19 @@ parser.add_argument('--mark-box', type=str, nargs="*", default=[], choices=["str
 args = parser.parse_args()
 print(args)
 
+t_months = np.array(args.watermonths)
+
 ds_stat = {}
 for k in ["clim", "AR",]:
     ds_stat[k] = xr.open_dataset("%s/stat_%s.nc" % (args.input_dir, k))
 
+
+
+# generate AR freq
+#print(np.array([31, 30, 31, 31, 28, 31])[:, None, None]) 
+#print(ds_stat["AR"]["IVT"][:, :, :, 3].to_numpy().shape)
+ARfreq = ds_stat["AR"]["IVT"][:, :, :, 3].to_numpy() / (365/2)
+# / ( np.array([31, 30, 31, 31, 28, 31])[:, None, None] ) / 25
 
 
 plot_infos_scnario = {
@@ -326,9 +335,6 @@ proj_norm = ccrs.PlateCarree()
 
 varnames = args.varnames
 
-ncol = len(args.time)
-nrow = len(varnames)
-
 figsize, gridspec_kw = tool_fig_config.calFigParams(
     w = 4.8,
     h = 2.0,
@@ -338,13 +344,13 @@ figsize, gridspec_kw = tool_fig_config.calFigParams(
     w_right = 2.2,
     h_bottom = 1.0,
     h_top = 1.0,
-    ncol = ncol,
-    nrow = nrow,
+    ncol = len(t_months),
+    nrow = len(varnames),
 )
 
 
 fig, ax = plt.subplots(
-    nrow, ncol,
+    len(varnames), len(t_months),
     figsize=figsize,
     subplot_kw=dict(projection=proj, aspect="auto"),
     gridspec_kw=gridspec_kw,
@@ -361,12 +367,24 @@ cmap.set_under("yellow")
 mappables = [ None for i in range(len(varnames)) ]
 
 thumbnail_cnt = 0
-for i, mon in enumerate(args.time):
+for i, mon in enumerate(t_months):
 
     _ax = ax[:, i]
   
+    m = mon - 1
+
+
     # Set title for different month except for the whole average mon==7
-    _ax[0].set_title(mon, size=30)
+    if mon != 7:
+        _ax[0].set_title([
+            "Oct",
+            "Nov",
+            "Dec",
+            "Jan",
+            "Feb",
+            "Mar",
+            "Oct-Mar",
+        ][m], size=30)
 
     for j, varname in enumerate(varnames):
 
@@ -376,63 +394,60 @@ for i, mon in enumerate(args.time):
             fig.delaxes(_ax[j])
             continue
 
-        AR_da = ds_stat["AR"][varname].sel(time=mon)
-        clim_da = ds_stat["clim"][varname].sel(time=mon)
-
-        
-        # 4 = annual_mean = the mean of annual means 
-        # 8 = sampling count = the count of years whose annual means are used
-        _mean1 = AR_da.sel(stat="mean").to_numpy()
-        _mean2 = clim_da.sel(stat="mean").to_numpy()
-
-        _std1 = AR_da.sel(stat="std").to_numpy()
-        _std2 = clim_da.sel(stat="std").to_numpy()
-
-        _nobs1 = AR_da.sel(stat="cnt").to_numpy()
-        _nobs2 = clim_da.sel(stat="cnt").to_numpy()
+        _mean1 = ds_stat["AR"][varname][m, :, :, 0].to_numpy()
+        _mean2 = ds_stat["ARf"][varname][m, :, :, 0].to_numpy()
+ 
+        _std1 = ds_stat["AR"][varname][m, :, :, 1].to_numpy()
+        _std2 = ds_stat["ARf"][varname][m, :, :, 1].to_numpy()
+ 
+        _nobs1 = ds_stat["AR"][varname][m, :, :, 3].to_numpy()
+        _nobs2 = ds_stat["ARf"][varname][m, :, :, 3].to_numpy()
 
         _, pvals = student_t_test(_mean1, _std1, _nobs1, _mean2, _std2, _nobs2)        
         
+        _diff = ds_stat["AR"][varname][m, :, :, 0].to_numpy()
+        #_diff = ((ds_stat["AR"][varname][m, :, :, 0] - ds_stat["clim"][varname][m, :, :, 0])).to_numpy()
+
 
         plot_info = plot_infos[varname]
 
+        _diff_all = _diff
+
         if varname in ["IWV", "IVT"]:
 
-            _plot_data = ( AR_da.sel(stat="mean").to_numpy() + clim_da.sel(stat="mean").to_numpy() ) / plot_info["factor"]
-            mappables[j] = _ax[j].contourf(
-                coords["lon"], coords["lat"],
-                _plot_data,
-                levels=plot_info["levels"],
-                cmap="GnBu",
-                extend="max",
-                transform=proj_norm,
-            )
+            _plot = ds_stat["AR"][varname][m, :, :, 0].to_numpy() + ds_stat["clim"][varname][m, :, :, 0].to_numpy()
+            mappables[j] = _ax[j].contourf(coords["lon"], coords["lat"], _plot / plot_info["factor"], levels=plot_info["levels"], cmap="GnBu", extend="max", transform=proj_norm)
 
         else:
-            _plot_data = AR_da.sel(stat="mean").to_numpy() / plot_info["factor"]
-            mappables[j] = _ax[j].contourf(
-                coords["lon"], coords["lat"],
-                _plot_data,
-                levels=plot_info["levels"],
-                cmap=cmap, 
-                extend="both", 
-                transform=proj_norm,
-            )
+            mappables[j] = _ax[j].contourf(coords["lon"], coords["lat"], _diff_all / plot_info["factor"], levels=plot_info["levels"], cmap=cmap, extend="both", transform=proj_norm)
        
         if args.add_thumbnail_title :
             _ax[j].set_title("(%s)" % ("abcdefghijklmnopqrstuvwxyz"[thumbnail_cnt + args.thumbnail_offset]))
             thumbnail_cnt += 1
 
         
+
+
+        # Plot the AR frequency contours
+        _ARfreq = ARfreq[m, :, :]
+
+        """
+        _ax[j].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.3, ], colors="k", linestyles='--',  linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+        _ax[j].contour(coords["lon"], coords["lat"], ARfreq[m, :, :], levels=[0.4, ], colors="k", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+ 
+        """
+
         if varname == "SFCWIND":
             
-            readjust_U = (ds_stat["AR"]["u10"].sel(time=mon, stat="mean") / np.cos(np.deg2rad(coords["lat"]))).to_numpy()
-            readjust_V =  ds_stat["AR"]["v10"].sel(time=mon, stat="mean").to_numpy()
+            readjust_U = (ds_stat["AR"]["u10"][m, :, :, 0] / np.cos(np.deg2rad(coords["lat"]))).to_numpy()
+            readjust_V =  ds_stat["AR"]["v10"][m, :, :, 0].to_numpy()
             _ax[j].streamplot(coords["lon"], coords["lat"], readjust_U, readjust_V, transform=proj_norm, density=1, color="dodgerblue")
             
+
+
         if not args.no_sig:
             # Plot the hatch to denote significant data
-            _dot = np.zeros_like(_plot_data)
+            _dot = _diff * 0 
             _significant_idx =  (pvals <= 0.05) 
 
             _dot[ _significant_idx                 ] = 0.75
@@ -449,7 +464,7 @@ for i, mon in enumerate(args.time):
                 collection.set_linewidth(0.)
 
         # Plot the standard deviation
-        std = AR_da.sel(stat="std") / plot_info["factor"]
+        std = ds_stat["AR"][varname][m, :, :, 1] / plot_info["factor"]
         cs = _ax[j].contour(coords["lon"], coords["lat"], std, levels=plot_info["levels_std"], colors="k", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
 
 
@@ -458,6 +473,7 @@ for i, mon in enumerate(args.time):
 
 
         if ("strong_marine_warming" in args.mark_box) and (i == 0) and (j == 0):
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Add Box !!!!!!!!!!!!!!!!!!!!!!!!!!")
             lon_rng = np.array([-135, -120])  % 360
             lat_rng = np.array([15, 25])
             _ax[j].add_patch(
@@ -467,6 +483,16 @@ for i, mon in enumerate(args.time):
                 )
             )
             
+
+        #std = ds_stat["AR+ARf"][varname][m, :, :, 1] / plot_info["factor"]
+        #cs = _ax[j].contour(coords["lon"], coords["lat"], std, levels=plot_info["levels_std"], colors="yellow", linestyles='-',linewidths=1, transform=proj_norm, alpha=0.8, zorder=10)
+
+
+        #fmt = "%d" if np.all( np.array(plot_info["levels_std"]) % 1 == 0) else "%.1f"
+        #_ax[j].clabel(cs, fmt=fmt)
+
+
+
     for __ax in _ax: 
 
         __ax.set_global()

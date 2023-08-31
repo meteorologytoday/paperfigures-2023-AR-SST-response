@@ -3,8 +3,15 @@
 
 source 00_setup.sh
 
-echo "Making output directory 'final_figures'..."
-mkdir $finalfig_dir
+
+
+if [ -d "$finalfig_dir" ] ; then
+    echo "Output directory '${finalfig_dir}' already exists. Do not make new directory."
+else
+    echo "Making output directory '${finalfig_dir}'..."
+    mkdir $finalfig_dir
+fi
+
 
 
 echo "Making final figures... "
@@ -14,21 +21,15 @@ convert $fig_dir/G_terms_atmocn_2.png \
         $fig_dir/G_terms_ocn_2.png \
         -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
 
-#convert $fig_dir/G_terms_atmocn_500m_2.png \
-#        $fig_dir/G_terms_atm_500m_2.png \
-#        $fig_dir/G_terms_ocn_500m_2.png \
-#        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown_500m.png
-
-
-# Merging two sub-figures
 convert \
     \(  \
-        \( $fig_dir/AR_freq_std.png -gravity South -chop 0x100 \)  \
-        \( $fig_dir/AR_EOF.png -gravity North -chop 0x200 -resize 90% \) -gravity East -chop 100x0  -gravity Northwest -append \
+        \( $fig_dir/AR_freq_std.png \)  \
+        \( $fig_dir/AR_EOF.png \) -gravity Northwest -append \
     \) -gravity East \(                               \
         $fig_dir/atmsfc_2.png -gravity West -chop 50x0          \
     \) -gravity Northwest +append       \
      $fig_dir/merged-EOF-forcing.png
+
 
 convert \
     \( $fig_dir/analysis_advbkdn__2.png \)  \
@@ -38,12 +39,23 @@ convert \
 
 
 convert \
-    \( $fig_dir/dTdt_scatter_ALL_EXTRATROPICAL_NPAC_a.png \)  \
-    \( $fig_dir/dTdt_scatter_ALL_EXTRATROPICAL_NPAC_b.png \)  \
+    \( $fig_dir/dTdt_scatter_ALL_NPAC_a.png \)  \
+    \( $fig_dir/dTdt_scatter_ALL_NPAC_b.png \)  \
     -gravity West +append       \
      $fig_dir/merged-dTdt_scatter.png
 
 
+
+for box_name in AR_REGION_E AR_REGION_W ; do
+  
+    convert \
+        \( $fig_dir/Gterms_pt_${box_name}_atmocn_1.png \)  \
+        \( $fig_dir/Gterms_pt_${box_name}_atm_1.png \)  \
+        \( $fig_dir/Gterms_pt_${box_name}_ocn_1.png \)  \
+        -gravity West +append       \
+         $fig_dir/merged-Gterms_pt_${box_name}.png
+
+done
 
 if [ ] ; then
 # This adds in the EOF timeseries. I think it is okay to just write the
@@ -62,11 +74,14 @@ fi
 name_pairs=(
     merged-EOF-forcing.png                 fig01.png
     merged-dTdt_scatter.png                fig02.png
-    merged-G_terms_map_breakdown.png       fig03.png
-    merged-additional-analysis.png         fig04.png
-    G_terms_atm_1.png                      fig05.png
-    G_terms_ocn_1.png                      fig06.png
-    G_terms_atmocn_1.png                   figS01.png
+    dTdt_stat_ALL_NPAC.png                 fig03.png
+    merged-Gterms_pt_AR_REGION_E.png       fig04.png
+    merged-G_terms_map_breakdown.png       fig05.png
+    merged-additional-analysis.png         fig06.png
+    merged-Gterms_pt_AR_REGION_W.png       figS01.png
+    G_terms_atm_1.png                      figS02.png
+    G_terms_ocn_1.png                      figS03.png
+    G_terms_atmocn_1.png                   figS04.png
 )
 
 N=$(( ${#name_pairs[@]} / 2 ))

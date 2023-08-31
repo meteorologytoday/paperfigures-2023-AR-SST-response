@@ -5,6 +5,8 @@ import traceback
 from pathlib import Path
 import argparse
 from datetime import (timedelta, datetime, timezone)
+import tool_fig_config
+
 
 parser = argparse.ArgumentParser(
                     prog = 'plot_skill',
@@ -60,11 +62,25 @@ plot_lat_t = 60.0
 proj = ccrs.PlateCarree(central_longitude=cent_lon)
 proj_norm = ccrs.PlateCarree()
 
+figsize, gridspec_kw = tool_fig_config.calFigParams(
+    w = 4.8,
+    h = 2.0,
+    wspace = 1.0,
+    hspace = 0.5,
+    w_left = 1.0,
+    w_right = 1.0,
+    h_bottom = 0.25,
+    h_top = 1.0,
+    ncol = 1,
+    nrow = 1,
+)
+
+
 fig, ax = plt.subplots(
     1, 1,
-    figsize=(8, 4),
-    subplot_kw=dict(projection=proj),
-    gridspec_kw=dict(hspace=0, wspace=0.2),
+    figsize=figsize,
+    subplot_kw=dict(projection=proj, aspect="auto"),
+    gridspec_kw=gridspec_kw,
     constrained_layout=False,
 )
 
@@ -88,13 +104,25 @@ ax.clabel(cs, fmt="%d")
 ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
 ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
 
-# Add a box over AR active region
+# Add western and eastern boxes over AR active region
+
+ax.scatter([151, 360-155], [31, 35], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
+
+"""
 ax.add_patch(
     Rectangle(
-        (150, 30), 60, 10,
+        (150, 30), 10, 10,
         linewidth=2, edgecolor="red", facecolor='none', transform=proj_norm,
     zorder=99)
 )
+
+ax.add_patch(
+    Rectangle(
+        (200, 30), 10, 10,
+        linewidth=2, edgecolor="red", facecolor='none', transform=proj_norm,
+    zorder=99)
+)
+"""
 
 
 ax.set_global()
@@ -116,8 +144,9 @@ gl.yformatter = LATITUDE_FORMATTER
 gl.xlabel_style = {'size': 10, 'color': 'black'}
 gl.ylabel_style = {'size': 10, 'color': 'black'}
 
-    
-cb = plt.colorbar(mappable, ax=ax, orientation="vertical", pad=0.01, shrink=0.5)
+ 
+cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.02, spacing=0.02)
+cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)#, #ticks=[-1, 0, 1])
 cb.ax.set_ylabel("AR days per wateryear")
 
 if not args.no_display:

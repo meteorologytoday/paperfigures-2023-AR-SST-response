@@ -16,13 +16,15 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--number-of-years', type=int, required=True)
 parser.add_argument('--input-dir', type=str, help='Input file', required=True)
-parser.add_argument('--lat-rng', type=float, nargs=2, help='Latitude range', required=True)
-parser.add_argument('--lon-rng', type=float, nargs=2, help='Longitude range', required=True)
+parser.add_argument('--lat', type=float, help='Latitude range', required=True)
+parser.add_argument('--lon', type=float, help='Longitude range', required=True)
 parser.add_argument('--output', type=str, help='Output file', default="")
 parser.add_argument('--title', type=str, help='Output title', default="")
+parser.add_argument('--skip-subfig-cnt', type=int, help='Skip subfigure count (starting abcdefg count)', default=0)
 parser.add_argument('--title-style', type=str, help='Output title', default="folder", choices=["folder", "latlon"])
 parser.add_argument('--breakdown', type=str, help='Output title', default="atmocn", choices=["atmocn", "atm", "ocn"])
 parser.add_argument('--no-display', action="store_true")
+parser.add_argument('--no-title', action="store_true")
 args = parser.parse_args()
 print(args)
 
@@ -84,21 +86,19 @@ print(ds_stat["AR"].coords["lat"])
 print(ds_stat["AR"].coords["lon"])
     
 
-args.lon_rng = np.array(args.lon_rng) % 360.0
+args.lon %= 360
 
-print("Selecting data range : lat = [%.2f , %.2f], lon = [%.2f, %.2f]" % (*args.lat_rng, *args.lon_rng))
+selected_latidx = np.argmin(np.abs(ds_stat["AR"].coords["lat"].to_numpy() - args.lat))
+selected_lonidx = np.argmin(np.abs(ds_stat["AR"].coords["lon"].to_numpy() - args.lon))
+
+selected_lat = ds_stat["AR"].coords["lat"][selected_latidx]
+selected_lon = ds_stat["AR"].coords["lon"][selected_lonidx]
+
+print("Selecting data range : lat[%d] = %.2f, lon[%d] = %.2f" % (selected_latidx, selected_lat, selected_lonidx, selected_lon))
 
 for k, _var in ds_stat.items():
-    latlon_sel = (
-        (_var.coords["lat"] >= args.lat_rng[0])
-        & (_var.coords["lat"] <= args.lat_rng[1])
-        & (_var.coords["lon"] >= args.lon_rng[0])
-        & (_var.coords["lon"] <= args.lon_rng[1])
-    )
 
-    ds_stat[k] = _var.where(latlon_sel).mean(dim=['lat', 'lon'])
-
-
+    ds_stat[k] = _var.isel(lat=selected_latidx, lon=selected_lonidx)
 
 
 if args.breakdown == "atmocn":
@@ -119,20 +119,12 @@ if args.breakdown == "atmocn":
 plot_infos_scnario = {
 
     "clim" : {
-        "title" : "All",
+        "title" : "Climatology",
     },
 
     "AR" : {
-        "title" : "AR",
+        "title" : "AR composite (anomaly)",
     },
-
-    "ARf" : {
-        "title" : "AR free",
-    },
-
-    "AR-ARf" : {
-        "title" : "AR minus AR free",
-    }
 
 }
 
@@ -163,22 +155,22 @@ plot_infos = {
 
     "MLG_adv" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{adv}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
     }, 
 
     "MLG_vdiff" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{vdiff}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vdiff}} $",
     }, 
 
     "MLG_ent" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{ent}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} $",
     }, 
 
     "MLG_hdiff" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{hdiff}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{hdiff}} $",
     }, 
 
     "MLG_res2" : {
@@ -188,27 +180,27 @@ plot_infos = {
 
     "MLG_frc_sw" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{sw}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sw}} $",
     }, 
 
     "MLG_frc_lw" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{lw}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{lw}} $",
     }, 
 
     "MLG_frc_lh" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{lh}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{lh}} $",
     }, 
 
     "MLG_frc_sh" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{sh}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sh}} $",
     }, 
 
     "MLG_frc_fwf" : {
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{fwf}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{fwf}} $",
     }, 
 
 
@@ -218,18 +210,17 @@ plot_infos = {
 plot_ylim = {
 
     "atmocn" : {
-        "mean" : [-1.2, 0.2],
-        "anom" : [-0.6, 0.7],
+        "mean" : [-1.15, 0.25],
+        "anom" : [-0.65, 0.75],
     },
 
     "atm" : {
-        "mean" : [-1.2, 0.8],
-        "anom" : [-0.3, 0.7],
+        "mean" : [-1.2, 1.05],
+        "anom" : [-0.3, 0.55],
     },
 
     "ocn" : {
         "mean" : [-0.6, 0.3],
-        #"anom" : [-0.06, 0.01],
         "anom" : [-0.6, 0.3],
     },
 
@@ -288,11 +279,12 @@ def pretty_latlon(lat, lon):
 
 if args.title == "":
 
-    if args.title_style == "folder":
-        fig.suptitle(args.input_dir)
-    elif args.title_style == "latlon":
-        title = ""#("%s %s : " % pretty_latlon(final_lat, final_lon)) + args.breakdown
-        fig.suptitle(title)
+    if not args.no_title:
+        if args.title_style == "folder":
+            fig.suptitle(args.input_dir)
+        elif args.title_style == "latlon":
+            title = ""#("%s %s : " % pretty_latlon(final_lat, final_lon)) + args.breakdown
+            fig.suptitle(title)
 
 
 else:
@@ -362,7 +354,7 @@ for s, sname in enumerate(["clim", "AR"]):
                 zorder=99,
             )
 
-            _ax.text(x_pos[m] + full_width/2 - bar_width/2, 0.95, "(%.1f)" % (N[m], ), transform=text_transform, va="top", ha="center")
+            _ax.text(x_pos[m] + full_width/2 - bar_width/2, 0.95, "(%d)" % (N[m], ), transform=text_transform, va="top", ha="center")
 
             """
             result = ttest_ind_from_stats(
@@ -381,15 +373,20 @@ for s, sname in enumerate(["clim", "AR"]):
     _ax.set_xlabel("Month")
     _ax.set_ylabel("[ $ 1 \\times 10^{-6} \\mathrm{K} \\, / \\, \\mathrm{s} $ ]")
 
-    _ax.set_title("(%s) %s " % (
-        "abcdefghijklmn"[s],
+    _ax.set_title("(%s) %s - %s " % (
+        "abcdefghijklmn"[args.skip_subfig_cnt + s],
         plot_infos_scnario[sname]['title'],
+        dict(
+            atmocn = "overview",
+            atm = "sfc forcing",
+            ocn = "ocean dyn",
+        )[args.breakdown],
     ))
 
     
     _ax.set_xlim([-0.5, len(plot_months) + 1.0])
 
-    _ax.legend(loc="center right", borderpad=0.4, labelspacing=0.1)
+    _ax.legend(loc="center right", borderpad=0.4, labelspacing=0.1, fontsize=12)
 
     if sname == "clim":
         ylim = plot_ylim[args.breakdown]['mean']
