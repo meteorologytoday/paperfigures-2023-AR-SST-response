@@ -63,7 +63,7 @@ plot_infos = {
     "dMLTdt" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ttl}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{loc}} $",
         "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     },
@@ -532,8 +532,8 @@ for i, mon in enumerate(args.time):
         
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 15, 'color': 'black'}
-        gl.ylabel_style = {'size': 15, 'color': 'black'}
+        gl.xlabel_style = {'size': 12, 'color': 'black'}
+        gl.ylabel_style = {'size': 12, 'color': 'black'}
 
 
 

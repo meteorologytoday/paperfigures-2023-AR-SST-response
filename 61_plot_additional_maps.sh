@@ -19,7 +19,7 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames MLHADVT_g MLHADVT_ag ENT_ADV MLD lcc mcc hcc \\
+        --varnames MLHADVT_ag ENT_ADV MLD lcc mcc hcc \\
         --output $fig_dir/analysis_${suffix}_${count}.png \\
         --time $wm_str \\
         --no-display" &
@@ -31,7 +31,7 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames hcc mcc lcc BLANK \\
+        --varnames hcc mcc lcc \\
         --output $fig_dir/analysis_mldandcld_${suffix}_${count}.png \\
         --time $wm_str         \\
         --add-thumbnail-title  \\
@@ -40,7 +40,7 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames MLHADVT_g MLHADVT_ag MLD dTdz_b \\
+        --varnames MLHADVT_ag MLD dTdz_b \\
         --output $fig_dir/analysis_advbkdn_${suffix}_${count}.png \\
         --time $wm_str \\
         --add-thumbnail-title \\

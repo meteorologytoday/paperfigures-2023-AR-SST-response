@@ -113,7 +113,7 @@ plot_infos = {
     "dMLTdt" : {
         "factor" : 1e-6,
         "levels": shared_levels,
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ttl}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{loc}} $",
         "color" : "gray",
         "hatch" : '///',
     },
@@ -222,7 +222,7 @@ plot_infos = {
     "ENT_ADV" : {
         "factor" : 1e-6,
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{dilu}} $",
+        "label" : "$ G_{\mathrm{entadv}} $",
     }, 
 
     "dMLDdt" : {
@@ -311,7 +311,7 @@ plot_info = [
     ),
 
     (
-        "(b) $ \\left( \\eta - h \\right)_t $",
+        "(b) $ \\partial \\left( h - \\eta \\right) / \\partial t $",
         [
             ("dMLDdt"   , "k", "-", 1),
         ],
@@ -332,13 +332,12 @@ plot_info = [
         ],
     ),
 
-    (
-        "(e) ENT_ADV",
-        [
-            ("ENT_ADV"   , "k", "-", 1),
-        ],
-    ),
-
+#    (
+#        "(e) ENT_ADV",
+#        [
+#            ("ENT_ADV"   , "k", "-", 1),
+#        ],
+#    ),
 
 ]
 
@@ -455,6 +454,9 @@ ax[2, 0].set_ylim(np.array([-1.7, 1.2]))
 
 ax[3, 0].set_ylim(np.array([-2, 8]))
 ax[3, 0].legend(ncols=1, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+ax[3, 0].set_ylabel("[$ \\mathrm{m} / \\mathrm{s} $]")
+
+#ax[2, 0].set_ylabel("[$ 1 \\times 10^{-2} \\, \\mathrm{K} / \\mathrm{m} $]")
 
 
 #ax.set_yticks([-1, 0, 1])

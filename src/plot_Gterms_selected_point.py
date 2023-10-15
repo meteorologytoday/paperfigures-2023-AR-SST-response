@@ -130,7 +130,7 @@ plot_infos = {
     
     "dMLTdt" : {
         "levels": shared_levels,
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ttl}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{loc}} $",
         "color" : "gray",
         "hatch" : None,#'///',
     },
