@@ -1,4 +1,7 @@
 #!/bin/bash
+py=python3
+sh=bash
+
 
 src_dir=src
 data_dir=./data

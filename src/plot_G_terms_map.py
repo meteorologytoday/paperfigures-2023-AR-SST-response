@@ -55,6 +55,9 @@ plot_infos_scnario = {
 
 
 G_scale = 0.5
+G_scale2 = 0.2
+G_scale3 = 0.1
+G_scale4 = 0.01
 plot_infos = {
     
     "dMLTdt" : {
@@ -89,10 +92,35 @@ plot_infos = {
         "factor" : 1e-6,
     }, 
 
-    "MLG_hdiff" : {
+    "MLG_vdiff_entwep" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{hdiff}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ent}} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_hdiff" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale3,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{hdif}} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+    "MLG_vmix" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{vmix}} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
+
+    "MLG_ent_wen" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale3,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{det}} $",
         "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
@@ -101,7 +129,7 @@ plot_infos = {
     "MLG_ent" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
         "levels_std": np.linspace(0, 2, 11),
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ent}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{ent}} + \\dot{\\overline{\\Theta}}_{\\mathrm{det}} $",
         "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
@@ -148,12 +176,21 @@ plot_infos = {
     }, 
 
     "MLG_frc_fwf" : {
-        "levels": np.linspace(-1, 1, 11) * G_scale,
+        "levels": np.linspace(-1, 1, 11) * G_scale2,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{fwf}} $",
         "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
         "factor" : 1e-6,
     }, 
+
+    "MLG_frc_dilu" : {
+        "levels": np.linspace(-1, 1, 11) * G_scale3,
+        "levels_std": np.linspace(0, 2, 11),
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\\mathrm{dilu}} $",
+        "unit"  : "$ 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $",
+        "factor" : 1e-6,
+    }, 
+
 
     "MLHADVT_g" : {
         "levels": np.linspace(-1, 1, 11) * G_scale,
@@ -226,7 +263,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "LCC",
-        "unit"  : "[ None ]",
+        "unit"  : "None",
         "factor" : 1.0,
     }, 
 
@@ -234,7 +271,7 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "MCC",
-        "unit"  : "[ None ]",
+        "unit"  : "None",
         "factor" : 1.0,
     }, 
 
@@ -242,8 +279,17 @@ plot_infos = {
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "levels_std": np.linspace(0, 1, 11) * 0.5,
         "label" : "HCC",
-        "unit"  : "[ None ]",
+        "unit"  : "None",
         "factor" : 1.0,
+    }, 
+
+
+    "dTdz_b" : {
+        "levels": np.linspace(-1, 1, 11) * 2,
+        "levels_std": np.linspace(0, 1, 11) * 2,
+        "label" : "$\\partial \\Theta_{\\eta - h} / \\partial z $",
+        "unit"  : "$10^{-2} \\, \\mathrm{K} \\, / \\, \\mathrm{m}$",
+        "factor" : 1e-2,
     }, 
 
 

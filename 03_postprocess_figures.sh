@@ -32,8 +32,8 @@ convert \
 
 
 convert \
-    \( $fig_dir/analysis_advbkdn__2.png \)  \
     \( $fig_dir/analysis_mldandcld__2.png \)  \
+    \( $fig_dir/analysis_advbkdn__2.png \)  \
     -gravity Northwest +append       \
      $fig_dir/merged-additional-analysis.png
 
@@ -78,11 +78,11 @@ name_pairs=(
     merged-Gterms_pt_AR_REGION_E.png       fig04.png
     merged-G_terms_map_breakdown.png       fig05.png
     merged-additional-analysis.png         fig06.png
-    merged-Gterms_pt_AR_REGION_W.png       figS01.png
+    G_terms_atmocn_1.png                   figS01.png
     G_terms_atm_1.png                      figS02.png
     G_terms_ocn_1.png                      figS03.png
-    G_terms_atmocn_1.png                   figS04.png
 )
+#    merged-Gterms_pt_AR_REGION_W.png       figS01.png
 
 N=$(( ${#name_pairs[@]} / 2 ))
 echo "We have $N figure(s) to rename."

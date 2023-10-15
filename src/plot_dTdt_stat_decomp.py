@@ -1,5 +1,3 @@
-#import fmon_tools, watertime_tools
-#import ARstat_tool
 import xarray as xr
 import traceback
 from pathlib import Path
@@ -58,9 +56,9 @@ ds_anom = xr.merge([
     ds_anom,
     (ds_anom['MLG_nonfrc'] - (
         ds_anom['MLG_adv']
-        + ds_anom['MLG_vdiff']
+        + ds_anom['MLG_vmix']
+        + ds_anom['MLG_ent_wen']
         + ds_anom['MLG_hdiff']
-        + ds_anom['MLG_ent']
     )).rename('MLG_myres')
 ])
 
@@ -148,10 +146,29 @@ plot_infos = {
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vdiff}} $",
     }, 
 
-    "MLG_ent" : {
+    "MLG_vmix" : {
+        "factor" : 1e-6,
+        "levels": shared_levels,
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vmix}} $",
+    }, 
+
+
+    "MLG_ent_wep" : {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} $",
+    }, 
+
+    "MLG_ent_wen" : {
+        "factor" : 1e-6,
+        "levels": shared_levels,
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{det}} $",
+    }, 
+
+    "MLG_ent" : {
+        "factor" : 1e-6,
+        "levels": shared_levels,
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} + \\dot{\\overline{\\Theta}}_{\mathrm{det}} $",
     }, 
 
     "MLG_hdiff" : {
@@ -165,7 +182,6 @@ plot_infos = {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{res}} $",
     }, 
-
 
     "MLG_res2" : {
         "factor" : 1e-6,
@@ -197,16 +213,62 @@ plot_infos = {
         "label" : "$ G_{\mathrm{sh}} $",
     }, 
 
-    "MLG_frc_fwf" : {
+    "MLG_frc_dilu" : {
         "factor" : 1e-6,
         "levels": shared_levels,
-        "label" : "$ G_{\mathrm{fwf}} $",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{dilu}} $",
+    }, 
+
+    "ENT_ADV" : {
+        "factor" : 1e-6,
+        "levels": shared_levels,
+        "label" : "$ G_{\mathrm{dilu}} $",
     }, 
 
     "dMLDdt" : {
         "factor" : 1e-5,
         "levels": np.linspace(-1, 1, 11) * 0.5,
         "label" : "$ w_e = \partial h / \partial t $",
+    }, 
+
+    "MLHADVT_ag" : {
+        "factor" : 1e-6,
+        "levels": np.linspace(-1, 1, 11) * 0.5,
+        "label" : "$ - \\overline{\\vec{v}}_\\mathrm{ag} \\cdot \\nabla_z \\overline{\\Theta} $",
+    }, 
+
+    "MLHADVT_g" : {
+        "factor" : 1e-6,
+        "levels": np.linspace(-1, 1, 11) * 0.5,
+        "label" : "$ - \\overline{\\vec{v}}_\\mathrm{g} \\cdot \\nabla_z \\overline{\\Theta} $",
+    }, 
+
+
+
+    "MLD" : {
+        "factor" : 1,
+        "levels": np.arange(-10, 21, 5),
+        "label" : "$ \\eta - h $",
+    }, 
+
+
+    "dTdz_b" : {
+        "factor" : 1e-2,
+        "levels": np.linspace(-1, 1, 11) * 2,
+        "label" : "$ \\partial \\Theta_b / \\partial z $",
+    }, 
+
+
+    "u10" : {
+        "factor" : 1.0,
+        "levels": np.linspace(-1, 1, 11) * 5,
+        "label" : "$u_\\mathrm{10m}$",
+    }, 
+
+    "v10" : {
+        "factor" : 1.0,
+        "levels": np.linspace(-1, 1, 11) * 5,
+        "label" : "$v_\\mathrm{10m}$",
     }, 
 
 
@@ -233,12 +295,59 @@ from scipy.stats import linregress
 
 print("done")
 
+plot_info = [
+
+    (
+        "(a) Decomposition of $\\dot{\\overline{\\Theta}}_\\mathrm{ocn}$",
+        [
+            ("MLG_nonfrc"   , "dodgerblue", "-", 3),
+            ("MLG_adv"      , "green", "-", 2),
+            ("MLG_vmix"     , "orange", "-", 2),
+            ("MLG_ent_wen"  , "red", "-", 2),
+            ("MLG_hdiff"    , "violet", "-", 2),
+            ("MLHADVT_g"     ,   "k", "--", 2),
+            ("MLHADVT_ag"    ,   "k", "-", 2),
+        ],
+    ),
+
+    (
+        "(b) $ \\left( \\eta - h \\right)_t $",
+        [
+            ("dMLDdt"   , "k", "-", 1),
+        ],
+    ),
+
+    (
+        "(c) $ \\partial \\Theta_{\\eta - h} / \\partial z$",
+        [
+            ("dTdz_b"   , "k", "-", 1),
+        ],
+    ),
+
+    (
+        "(d) $u_\\mathrm{10m}$ and $v_\\mathrm{10m}$",
+        [
+            ("u10"   , "k", "-", 1),
+            ("v10"   , "k", "--", 1),
+        ],
+    ),
+
+    (
+        "(e) ENT_ADV",
+        [
+            ("ENT_ADV"   , "k", "-", 1),
+        ],
+    ),
+
+
+]
+
 
 ncol = 1
-nrow = 2
+nrow = len(plot_info)
 figsize, gridspec_kw = tool_fig_config.calFigParams(
     w = 3,
-    h = [3, 1],
+    h = [3] + (nrow-1) * [1, ],
     wspace = 1.0,
     hspace = 1.0,
     w_left = 1.0,
@@ -294,29 +403,8 @@ def pretty_latlon(lat, lon):
 varname_x = "MLG_frc"
 
 
-for i, (title, plotted_variables) in enumerate([
+for i, (title, plotted_variables) in enumerate(plot_info):
 
-    (
-        "(a) Decomposition of $\\dot{\\overline{\\Theta}}_\\mathrm{ocn}$",
-        [
-            ("MLG_nonfrc"   , "k", "-", 3),
-            ("MLG_adv"   , "green", "-", 2),
-            ("MLG_ent"   , "orangered", "-", 2),
-            ("MLG_vdiff" , "dodgerblue", "-", 2),
-            ("MLG_hdiff" , "gray", "-", 2),
-        #    ("MLG_myres" , "yellow", ":"),
-        ],
-    ),
-
-    (
-        "(b) $ w_e = \\partial h / \\partial t $",
-        [
-            ("dMLDdt"   , "k", "-", 1),
-        ],
-    ),
-
-
-]):
     _ax = ax[i, 0]
 
     print("Plotting the %d-th axis." % (i, ))
@@ -354,11 +442,20 @@ for _ax in ax.flatten():
 
 ax[0, 0].set_ylabel("[$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]")
 ax[0, 0].set_ylim([-0.80, 0.20])
-ax[0, 0].legend(ncols=2, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+ax[0, 0].legend(ncols=2, prop={'size': 11}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
 
 ax[1, 0].set_ylabel("[$ 1 \\times 10^{-5} \\, \\mathrm{m} / \\mathrm{s} $]")
+#ax[1, 0].set_ylabel("[$ \\mathrm{m} $]")
+#ax[1, 0].set_ylim([-20, 10])#np.array([-1, 1]) * 10.0)
 ax[1, 0].set_ylim(np.array([-1, 1]) * 10.0)
 ax[1, 0].invert_yaxis()
+
+ax[2, 0].set_ylabel("[$ 1 \\times 10^{-2} \\, \\mathrm{K} / \\mathrm{m} $]")
+ax[2, 0].set_ylim(np.array([-1.7, 1.2]))
+
+ax[3, 0].set_ylim(np.array([-2, 8]))
+ax[3, 0].legend(ncols=1, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+
 
 #ax.set_yticks([-1, 0, 1])
 

@@ -106,7 +106,8 @@ ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transfor
 
 # Add western and eastern boxes over AR active region
 
-ax.scatter([151, 360-155], [31, 35], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
+#ax.scatter([151, 360-155], [31, 35], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
+ax.scatter([360-155,], [35,], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
 
 """
 ax.add_patch(

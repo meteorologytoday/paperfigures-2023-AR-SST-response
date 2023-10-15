@@ -31,20 +31,22 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames MLHADVT_g MLHADVT_ag ENT_ADV \\
-        --output $fig_dir/analysis_advbkdn_${suffix}_${count}.png \\
-        --time $wm_str \\
-        --add-thumbnail-title \\
+        --varnames hcc mcc lcc BLANK \\
+        --output $fig_dir/analysis_mldandcld_${suffix}_${count}.png \\
+        --time $wm_str         \\
+        --add-thumbnail-title  \\
+        --thumbnail-offset 0   \\
         --no-display" &
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames hcc mcc lcc MLD \\
-        --output $fig_dir/analysis_mldandcld_${suffix}_${count}.png \\
+        --varnames MLHADVT_g MLHADVT_ag MLD dTdz_b \\
+        --output $fig_dir/analysis_advbkdn_${suffix}_${count}.png \\
         --time $wm_str \\
         --add-thumbnail-title \\
         --thumbnail-offset 3 \\
         --no-display" &
+
 
     wait
 

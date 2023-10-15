@@ -1,5 +1,3 @@
-#import fmon_tools, watertime_tools
-#import ARstat_tool
 import xarray as xr
 import traceback
 from pathlib import Path
@@ -47,13 +45,13 @@ latlon_sel = (
 )
 
 AR_sel = ds_ttl['map_%s' % (args.AR_algo,)] > 0
-extra_sel = (ds_anom.time < pd.Timestamp('2016-05-01')) & (ds_anom.time > pd.Timestamp('2014-09-01')) 
+#extra_sel = (ds_anom.time < pd.Timestamp('2016-05-01')) & (ds_anom.time > pd.Timestamp('2014-09-01')) 
 
 total_sel = latlon_sel & AR_sel #& extra_sel
 
 print("Number of selected data points: %d " % ( np.sum(total_sel), ) )
 
-ds_anom = ds_anom.where(total_sel)
+
 
 factor_X = 1e-6
 factor_Y = 1e-6
@@ -70,6 +68,8 @@ varname_y = args.varnames[1]
 print("Varname X: ", varname_x)
 print("Varname Y: ", varname_y)
 
+ds_anom = ds_anom.where(total_sel)#.where(np.abs(ds_anom[varname_x]) < 2e-6)
+
 if varname_y == "dMLDdt":
     factor_Y = 1e-4
 
@@ -80,13 +80,41 @@ valid_idx = np.isfinite(data_x) & np.isfinite(data_y)
 data_x = data_x[valid_idx]
 data_y = data_y[valid_idx]
 
-#data_x = np.array([-1, -0.5, 0, .1, .2, .5])
-#data_y = np.array([-.5, -.21, 1e-3, 0.045, 0.1, 0.239])
-
 corr_coe = np.corrcoef(data_x, data_y)
 coe = np.polyfit(data_x, data_y, deg=1)
+
 print("corr_coe = ", corr_coe)
 print("coe = ", coe)
+
+print("===== Error propagation begin =====")
+# Use error propagation to estimate the 
+# uncertainty of slope
+
+cnt_valid_points = np.sum(valid_idx)
+print("cnt_valid_points = %d" % (cnt_valid_points,))
+
+# First estimate the standard deviation of y
+estimator_y = coe[0] * data_x + coe[1]
+var_y = np.var(data_y - estimator_y, ddof=1)
+
+
+# Compute the uncertainty
+var_x = np.var(data_x, ddof=0)
+std_slope = (var_y / cnt_valid_points / var_x)**0.5
+std_inter = (var_y * np.sum(data_x * data_x) / cnt_valid_points**2 / var_x)**0.5
+
+print("std(y-y_est) = ", var_y**0.5)
+print("Best fit slope = ", coe[0])
+print("std(slope) = ", std_slope)
+print("std(inter) = ", std_inter)
+
+
+print("===== Error propagation end =====")
+
+
+
+
+
 
 #fit_slope, fit_const = np.linalg.lstsq(A, y, rcond=None)[0]
 
@@ -305,7 +333,7 @@ mappable = ax.contourf(mid_x, mid_y, hist.transpose(), np.linspace(0, hist_color
 #mappable = ax.imshow(hist.transpose(), cmap='bone_r', extend="max")
 
 
-ax.text(0.10, 0.95, '$ y = %.2f x %+.2f$, $R = %.2f$' % (coe[0], coe[1], corr_coe[1, 0],), transform=ax.transAxes, color='red', ha='left', va='top', size=12)
+ax.text(0.10, 0.95, '$ y = \\left(%.2f\\pm%.4f\\right)x %+.2f$, $R = %.2f$' % (coe[0], std_slope, coe[1], corr_coe[1, 0],), transform=ax.transAxes, color='red', ha='left', va='top', size=10)
 
 x = np.linspace(-1, 1, 100) * .7
 #y = coe[0] * x**2 + coe[1] * x**1 + coe[2]

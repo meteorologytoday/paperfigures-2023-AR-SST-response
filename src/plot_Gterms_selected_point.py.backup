@@ -27,8 +27,8 @@ print(args)
 
 plotted_varnames = {
     "atmocn" : ["dMLTdt", "MLG_frc", "MLG_nonfrc"],
-    "atm" : ["MLG_frc", "MLG_frc_sw", "MLG_frc_lw", "MLG_frc_sh", "MLG_frc_lh", "MLG_frc_dilu" ],
-    "ocn" : ["MLG_nonfrc", "MLG_adv", "MLG_vmix", "MLG_ent_wen", "MLG_hdiff" ],
+    "atm" : ["MLG_frc", "MLG_frc_sw", "MLG_frc_lw", "MLG_frc_sh", "MLG_frc_lh", "MLG_frc_fwf"],
+    "ocn" : ["MLG_nonfrc", "MLG_adv", "MLG_vdiff", "MLG_ent", "MLG_hdiff"],
 }[args.breakdown]
 
 print(plotted_varnames)
@@ -63,6 +63,7 @@ for k in ["clim", "AR", ]:
     MLG_res2 = (ds['dMLTdt'] - (
           ds['MLG_frc']
         + ds['MLG_nonfrc']
+        + ds['MLG_rescale']
     )).rename('MLG_res2')
 
     print("RESIDUE: ", np.amax(np.abs(ds['MLG_residue'])))
@@ -152,7 +153,6 @@ plot_infos = {
     "MLG_adv" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
-        "color" : "green",
     }, 
 
     "MLG_vdiff" : {
@@ -160,30 +160,14 @@ plot_infos = {
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vdiff}} $",
     }, 
 
-    "MLG_vmix" : {
-        "levels": shared_levels,
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vmix}} $",
-        "color" : "orange",
-    }, 
-
-
-
-    "MLG_ent_wep" : {
+    "MLG_ent" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} $",
-    }, 
-
-
-    "MLG_ent_wen" : {
-        "levels": shared_levels,
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{det}} $",
-        "color" : "red",
     }, 
 
     "MLG_hdiff" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{hdiff}} $",
-        "color" : "violet",
     }, 
 
     "MLG_res2" : {
@@ -211,10 +195,9 @@ plot_infos = {
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sh}} $",
     }, 
 
-    "MLG_frc_dilu" : {
+    "MLG_frc_fwf" : {
         "levels": shared_levels,
-        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{dilu}} $",
-        "color" : "violet",
+        "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{fwf}} $",
     }, 
 
 

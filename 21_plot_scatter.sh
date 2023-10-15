@@ -55,6 +55,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --no-display \\
             " &
 
+        if [ ] ; then
         eval "python3 $src_dir/plot_dTdt_scatter_by_ARday_frc_nonfrc.py \\
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
@@ -103,7 +104,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
 
 
 
-
+        fi
 
 
 
