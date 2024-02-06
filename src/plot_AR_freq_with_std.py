@@ -24,6 +24,8 @@ print(args)
 
 ds = xr.open_dataset(args.input)
 
+#      Oct   Nov   Dec  Jan  Feb  Mar
+days = 31   + 30 + 31 + 31 + 28 + 31
 AR_mean= ds["count"].mean(dim=("time",))
 AR_std = ds["count"].std(dim=("time",))
 
@@ -93,7 +95,7 @@ cmap = cm.get_cmap("GnBu")
 #cmap.set_under("red")
 
 #mean_levels = np.linspace(0, 70, 15)
-mean_levels = np.linspace(0, 30, 6)
+mean_levels = np.linspace(0, 25, 11)
 std_levels = np.linspace(0, 20, 11)
 
 mappable = ax.contourf(coords["lon"], coords["lat"], AR_mean, levels=mean_levels, cmap=cmap, extend="max", transform=proj_norm)
@@ -101,12 +103,23 @@ cs = ax.contour(coords["lon"], coords["lat"], AR_std, levels=std_levels, colors=
 
 ax.clabel(cs, fmt="%d")
 
-ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
-ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+# ====== First submitted version =======
+#ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+#ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+#ax.scatter([360-155,], [35,], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
 
 # Add western and eastern boxes over AR active region
-
 #ax.scatter([151, 360-155], [31, 35], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
+
+
+# ====== Revised version =======
+ax.plot([360-170, 360-145], [43, 53], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+ax.plot([360-150, 360-130], [25, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+
+ax.plot([168, 360-172], [25, 30], color="lime", linestyle="dotted", transform=proj_norm, zorder=100)
+ax.plot([360-135, 360-115], [24, 24], color="lime", linestyle="dotted", transform=proj_norm, zorder=100)
+
+#ax.scatter([360-167,], [39,], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
 ax.scatter([360-155,], [35,], s=20, marker='x', edgecolors='face', c="red", transform=proj_norm, zorder=99)
 
 """

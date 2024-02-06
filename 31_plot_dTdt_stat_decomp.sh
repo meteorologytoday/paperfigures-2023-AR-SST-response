@@ -4,8 +4,6 @@
 
 source 00_setup.sh
 
-AR_algo=ANOM_LEN
-
 nproc=2
 
 box_params=(

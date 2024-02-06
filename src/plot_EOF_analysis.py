@@ -168,8 +168,19 @@ for i, _ax in enumerate(ax):
 
     mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i) * 10, levels=np.linspace(-1, 1, 21), cmap="bwr", extend="both", transform=proj_norm)
 
-    _ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
-    _ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
+    # old
+    #_ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)
+    #_ax.plot([360-150, 360-130], [30, 40], color="lime", linestyle="dashed", transform=proj_norm)
+
+    # new
+    if i == 0:
+        _ax.plot([360-170, 360-145], [43, 53], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+        _ax.plot([360-150, 360-130], [25, 40], color="lime", linestyle="dashed", transform=proj_norm, zorder=100)
+    elif i == 1:
+        _ax.plot([168, 360-172], [25, 30], color="lime", linestyle="dotted", transform=proj_norm, zorder=100)
+        _ax.plot([360-135, 360-115], [24, 24], color="lime", linestyle="dotted", transform=proj_norm, zorder=100)
+
+
 
     _ax.set_global()
     _ax.coastlines()
@@ -206,6 +217,7 @@ for i in range(args.nEOF): #len(ds.coords["EOF"])):
     line_prop = [
         dict(ls="solid",  color="k", ),
         dict(ls="dashed", color="k", ),
+        dict(ls="dotted", color="k", ),
     ][i]
 
     label = "EOF%d" % (i+1,)

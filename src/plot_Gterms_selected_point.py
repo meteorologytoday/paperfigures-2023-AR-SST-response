@@ -6,6 +6,8 @@ from datetime import (timedelta, datetime, timezone)
 from scipy.stats import ttest_ind_from_stats
 import numpy as np
 
+import tool_fig_config
+
 parser = argparse.ArgumentParser(
                     prog = 'plot_skill',
                     description = 'Plot prediction skill of GFS on AR.',
@@ -20,6 +22,7 @@ parser.add_argument('--title', type=str, help='Output title', default="")
 parser.add_argument('--skip-subfig-cnt', type=int, help='Skip subfigure count (starting abcdefg count)', default=0)
 parser.add_argument('--title-style', type=str, help='Output title', default="folder", choices=["folder", "latlon"])
 parser.add_argument('--breakdown', type=str, help='Output title', default="atmocn", choices=["atmocn", "atm", "ocn"])
+parser.add_argument('--cases', type=str, nargs="+", help='Available options: `clim`, `AR`.', default=["clim", "AR",], choices=["clim", "AR"])
 parser.add_argument('--no-display', action="store_true")
 parser.add_argument('--no-title', action="store_true")
 args = parser.parse_args()
@@ -53,9 +56,10 @@ plot_months = [
     ( "Feb-Mar",11 ),
 ]
 
+cases = args.cases
 
 ds_stat = {}
-for k in ["clim", "AR", ]:
+for k in cases:
     ds_stat[k] = xr.open_dataset("%s/stat_%s.nc" % (args.input_dir, k))
    
     ds = ds_stat[k] 
@@ -166,8 +170,6 @@ plot_infos = {
         "color" : "orange",
     }, 
 
-
-
     "MLG_ent_wep" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ent}} $",
@@ -234,8 +236,8 @@ plot_ylim = {
     },
 
     "ocn" : {
-        "mean" : [-0.6, 0.3],
-        "anom" : [-0.6, 0.3],
+        "mean" : [-0.6, 0.1],
+        "anom" : [-0.6, 0.1],
     },
 
 }
@@ -261,7 +263,24 @@ from scipy.stats import linregress
 
 print("done")
 
-fig, ax = plt.subplots(2, 1, figsize=(6, 8), squeeze=False, constrained_layout=True)# gridspec_kw = dict(hspace=0.3, wspace=0.4))
+
+nrow = len(cases)
+ncol = 1
+figsize, gridspec_kw = tool_fig_config.calFigParams(
+    w = 6.0,
+    h = 4.0,
+    wspace = 1.0,
+    hspace = 0.5,
+    w_left = 1.0,
+    w_right = 1.0,
+    h_bottom = 0.25,
+    h_top = 1.0,
+    ncol = ncol,
+    nrow = nrow,
+)
+
+
+fig, ax = plt.subplots(nrow, ncol, figsize=figsize, squeeze=False, gridspec_kw=gridspec_kw)
 
 
 def pretty_latlon(lat, lon):
@@ -310,7 +329,7 @@ bar_width = full_width / len(plotted_varnames) #0.15
 
 
 # Plot different decomposition
-for s, sname in enumerate(["clim", "AR"]):
+for s, sname in enumerate(cases):
 
     ds = ds_stat[sname]
    
@@ -340,7 +359,6 @@ for s, sname in enumerate(["clim", "AR"]):
         # 4 = annual_mean = the mean of annual means 
         _ax.bar(x_pos + i*bar_width, _data[selected_idx, 4] / factor, bar_width, label=plot_infos[varname]['label'], **kwargs)
 
-        #print(ds)
         #_anom_ARpARf_data = ds_stat["AR+ARf"][varname].to_numpy()[selected_idx, :]  / factor
         _anom_AR_data = ds_stat["AR"][varname].to_numpy()[selected_idx, :] / factor
         #_anom_ARf_data = ds_stat["ARf"][varname].to_numpy()[selected_idx, :] / factor
@@ -359,27 +377,28 @@ for s, sname in enumerate(["clim", "AR"]):
 
 
         # Plot error bars to different time
-        text_transform = transforms.blended_transform_factory(_ax.transData, _ax.transAxes)
-        for m, idx in enumerate(selected_idx): 
-            _ax.plot(
-                [x_pos[m] + i*bar_width] * 2,
-                np.array([_error_bar_lower[m], _error_bar_upper[m]]) + _offset[m],
-                color="black",
-                zorder=99,
-            )
+        if sname == "AR":
+            text_transform = transforms.blended_transform_factory(_ax.transData, _ax.transAxes)
+            for m, idx in enumerate(selected_idx): 
+                _ax.plot(
+                    [x_pos[m] + i*bar_width] * 2,
+                    np.array([_error_bar_lower[m], _error_bar_upper[m]]) + _offset[m],
+                    color="black",
+                    zorder=99,
+                )
 
-            _ax.text(x_pos[m] + full_width/2 - bar_width/2, 0.95, "(%d)" % (N[m], ), transform=text_transform, va="top", ha="center")
+                _ax.text(x_pos[m] + full_width/2 - bar_width/2, 0.95, "(%d)" % (N[m], ), transform=text_transform, va="top", ha="center")
 
-            """
-            result = ttest_ind_from_stats(
-                _anom_AR_data[m, 0], _anom_AR_data[m, 1], _anom_AR_data[m, 3],
-                _anom_ARf_data[m, 0], _anom_ARf_data[m, 1], _anom_ARf_data[m, 3],
-                equal_var=False,
-                alternative='two-sided',
-            )
+                """
+                result = ttest_ind_from_stats(
+                    _anom_AR_data[m, 0], _anom_AR_data[m, 1], _anom_AR_data[m, 3],
+                    _anom_ARf_data[m, 0], _anom_ARf_data[m, 1], _anom_ARf_data[m, 3],
+                    equal_var=False,
+                    alternative='two-sided',
+                )
 
-            print("[m=%d, idx=%d] Result of T-test: " % (m, idx), result)
-            """
+                print("[m=%d, idx=%d] Result of T-test: " % (m, idx), result)
+                """
 
     _ax.set_xticks(x_pos)
     _ax.set_xticklabels([ plot_month[0] for plot_month in plot_months])

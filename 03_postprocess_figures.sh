@@ -46,7 +46,7 @@ convert \
 
 
 
-for box_name in AR_REGION_E AR_REGION_W ; do
+for box_name in AR_REGION_MAX OLD_AR_REGION_E MAXOCNIMPACT ; do
   
     convert \
         \( $fig_dir/Gterms_pt_${box_name}_atmocn_1.png \)  \
@@ -75,7 +75,7 @@ name_pairs=(
     merged-EOF-forcing.png                 fig01.png
     merged-dTdt_scatter.png                fig02.png
     dTdt_stat_ALL_NPAC.png                 fig03.png
-    merged-Gterms_pt_AR_REGION_E.png       fig04.png
+    merged-Gterms_pt_MAXOCNIMPACT.png      fig04.png
     merged-G_terms_map_breakdown.png       fig05.png
     merged-additional-analysis.png         fig06.png
     G_terms_atmocn_1.png                   figS01.png

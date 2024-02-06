@@ -4,18 +4,12 @@
 source 00_setup.sh
 
 
-
-
-AR_algo=ANOM_LEN
-
-
-
 for suffix in "" ; do
 
     wm_str="Oct-Nov Dec-Jan Feb-Mar"
     count=1
 
-    input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}/${AR_algo}
+    input_dir=${diagdata_dir}${suffix}/climanom_${yrng_str}/${AR_algo}${algo_suffix}
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
