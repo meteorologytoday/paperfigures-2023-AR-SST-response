@@ -12,7 +12,7 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames MLHADVT_ag ENT_ADV MLD lcc mcc hcc \\
+        --varnames MLHADVT_ag ENT_ADV MLD tcc lcc mcc hcc MLT \\
         --output $fig_dir/analysis_${suffix}_${count}.png \\
         --time $wm_str \\
         --no-display" &
@@ -24,7 +24,7 @@ for suffix in "" ; do
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
-        --varnames hcc mcc lcc tcc EXFpreci EXFempmr sst msl \\
+        --varnames tcc sst msl \\
         --output $fig_dir/analysis_mldandcld_${suffix}_${count}.png \\
         --time $wm_str         \\
         --add-thumbnail-title  \\
@@ -39,6 +39,16 @@ for suffix in "" ; do
         --add-thumbnail-title \\
         --thumbnail-offset 3 \\
         --no-display" &
+
+    eval "python3 $src_dir/plot_G_terms_map.py \\
+        --input-dir $input_dir \\
+        --varnames tcc hcc mcc lcc EXFevap \\
+        --output $fig_dir/analysis_cloudcover_${suffix}_${count}.png \\
+        --time $wm_str \\
+        --add-thumbnail-title \\
+        --no-display" &
+
+
 
 
     wait

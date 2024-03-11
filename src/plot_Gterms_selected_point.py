@@ -22,17 +22,27 @@ parser.add_argument('--title', type=str, help='Output title', default="")
 parser.add_argument('--skip-subfig-cnt', type=int, help='Skip subfigure count (starting abcdefg count)', default=0)
 parser.add_argument('--title-style', type=str, help='Output title', default="folder", choices=["folder", "latlon"])
 parser.add_argument('--breakdown', type=str, help='Output title', default="atmocn", choices=["atmocn", "atm", "ocn"])
-parser.add_argument('--cases', type=str, nargs="+", help='Available options: `clim`, `AR`.', default=["clim", "AR",], choices=["clim", "AR"])
+parser.add_argument('--conditions', type=str, nargs="+", help='Available options: `clim`, `AR`.', default=["clim", "AR",], choices=["clim", "AR"])
 parser.add_argument('--no-display', action="store_true")
 parser.add_argument('--no-title', action="store_true")
 args = parser.parse_args()
 print(args)
 
+
+# Old version: every term
+#plotted_varnames = {
+#    "atmocn" : ["dMLTdt", "MLG_frc", "MLG_nonfrc"],
+#    "atm" : ["MLG_frc", "MLG_frc_sw", "MLG_frc_lw", "MLG_frc_sh", "MLG_frc_lh", "MLG_frc_dilu" ],
+#    "ocn" : ["MLG_nonfrc", "MLG_adv", "MLG_vmix", "MLG_ent_wen", "MLG_hdiff" ],
+#}[args.breakdown]
+
+# New version: don't plot MLG_hdiff and MLG_frc_dilu because they are too small
 plotted_varnames = {
     "atmocn" : ["dMLTdt", "MLG_frc", "MLG_nonfrc"],
-    "atm" : ["MLG_frc", "MLG_frc_sw", "MLG_frc_lw", "MLG_frc_sh", "MLG_frc_lh", "MLG_frc_dilu" ],
-    "ocn" : ["MLG_nonfrc", "MLG_adv", "MLG_vmix", "MLG_ent_wen", "MLG_hdiff" ],
+    "atm" : ["MLG_frc", "MLG_frc_sw", "MLG_frc_lw", "MLG_frc_sh", "MLG_frc_lh"],
+    "ocn" : ["MLG_nonfrc", "MLG_adv", "MLG_vmix", "MLG_ent_wen"],
 }[args.breakdown]
+
 
 print(plotted_varnames)
 
@@ -56,10 +66,10 @@ plot_months = [
     ( "Feb-Mar",11 ),
 ]
 
-cases = args.cases
+conditions = args.conditions
 
 ds_stat = {}
-for k in cases:
+for k in ["AR", "clim"]:#conditions:
     ds_stat[k] = xr.open_dataset("%s/stat_%s.nc" % (args.input_dir, k))
    
     ds = ds_stat[k] 
@@ -226,18 +236,18 @@ plot_infos = {
 plot_ylim = {
 
     "atmocn" : {
-        "mean" : [-1.15, 0.25],
-        "anom" : [-0.65, 0.75],
+        "mean" : [-1.15, 0.15],
+        "anom" : [-0.65, 0.45],
     },
 
     "atm" : {
-        "mean" : [-1.2, 1.05],
-        "anom" : [-0.3, 0.55],
+        "mean" : [-1.4, .95],
+        "anom" : [-0.3, 0.40],
     },
 
     "ocn" : {
-        "mean" : [-0.6, 0.1],
-        "anom" : [-0.6, 0.1],
+        "mean" : [-0.42, 0.12],
+        "anom" : [-0.62, 0.12],
     },
 
 }
@@ -249,8 +259,8 @@ if args.no_display is False:
     mpl.use('TkAgg')
 else:
     mpl.use('Agg')
-    #mpl.rc('font', size=20)
-    #mpl.rc('axes', labelsize=15)
+    mpl.rc('font', size=15)
+    mpl.rc('axes', labelsize=15)
      
  
   
@@ -264,17 +274,17 @@ from scipy.stats import linregress
 print("done")
 
 
-nrow = len(cases)
+nrow = len(conditions)
 ncol = 1
 figsize, gridspec_kw = tool_fig_config.calFigParams(
     w = 6.0,
     h = 4.0,
     wspace = 1.0,
     hspace = 0.5,
-    w_left = 1.0,
-    w_right = 1.0,
-    h_bottom = 0.25,
-    h_top = 1.0,
+    w_left = 0.6,
+    w_right = 0.2,
+    h_bottom = 0.4,
+    h_top = 0.4,
     ncol = ncol,
     nrow = nrow,
 )
@@ -329,7 +339,7 @@ bar_width = full_width / len(plotted_varnames) #0.15
 
 
 # Plot different decomposition
-for s, sname in enumerate(cases):
+for s, sname in enumerate(conditions):
 
     ds = ds_stat[sname]
    
@@ -403,23 +413,23 @@ for s, sname in enumerate(cases):
     _ax.set_xticks(x_pos)
     _ax.set_xticklabels([ plot_month[0] for plot_month in plot_months])
 
-    _ax.set_xlabel("Month")
+    #_ax.set_xlabel("Month")
     _ax.set_ylabel("[ $ 1 \\times 10^{-6} \\mathrm{K} \\, / \\, \\mathrm{s} $ ]")
 
-    _ax.set_title("(%s) %s - %s " % (
+    _ax.set_title("(%s) %s" % (
         "abcdefghijklmn"[args.skip_subfig_cnt + s],
-        plot_infos_scnario[sname]['title'],
+        #plot_infos_scnario[sname]['title'],
         dict(
-            atmocn = "overview",
-            atm = "sfc forcing",
-            ocn = "ocean dyn",
+            atmocn = "all",
+            atm = "surface fluxes",
+            ocn = "ocean modulation",
         )[args.breakdown],
     ))
 
     
-    _ax.set_xlim([-0.5, len(plot_months) + 1.0])
+    _ax.set_xlim([-0.5, len(plot_months)])
 
-    _ax.legend(loc="center right", borderpad=0.4, labelspacing=0.1, fontsize=12)
+    _ax.legend(loc="lower center", borderpad=0.4, labelspacing=0.1, fontsize=12, ncols=len(plotted_varnames))
 
     if sname == "clim":
         ylim = plot_ylim[args.breakdown]['mean']

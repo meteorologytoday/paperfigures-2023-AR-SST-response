@@ -16,9 +16,8 @@ fi
 
 echo "Making final figures... "
 
-convert $fig_dir/G_terms_atmocn_2.png \
+convert $fig_dir/G_terms_atmocn-ocn_2.png \
         $fig_dir/G_terms_atm_2.png \
-        $fig_dir/G_terms_ocn_2.png \
         -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
 
 convert \
@@ -46,17 +45,19 @@ convert \
 
 
 
+
 for box_name in AR_REGION_MAX OLD_AR_REGION_E MAXOCNIMPACT ; do
-  
-    convert \
-        \( $fig_dir/Gterms_pt_${box_name}_atmocn_1.png \)  \
-        \( $fig_dir/Gterms_pt_${box_name}_atm_1.png \)  \
-        \( $fig_dir/Gterms_pt_${box_name}_ocn_1.png \)  \
-        -gravity West +append       \
-         $fig_dir/merged-Gterms_pt_${box_name}.png
 
+    for condition in AR clim ; do  
+        convert \
+            \( $fig_dir/Gterms_pt_${box_name}_atmocn_${condition}_1.png \)  \
+            \( $fig_dir/Gterms_pt_${box_name}_atm_${condition}_1.png \)  \
+            \( $fig_dir/Gterms_pt_${box_name}_ocn_${condition}_1.png \)  \
+            -gravity West +append       \
+             $fig_dir/merged-Gterms_pt_${box_name}_${condition}.png
+
+    done
 done
-
 if [ ] ; then
 # This adds in the EOF timeseries. I think it is okay to just write the
 # correlation with PDO and ENSO in the paper or caption
@@ -75,12 +76,14 @@ name_pairs=(
     merged-EOF-forcing.png                 fig01.png
     merged-dTdt_scatter.png                fig02.png
     dTdt_stat_ALL_NPAC.png                 fig03.png
-    merged-Gterms_pt_MAXOCNIMPACT.png      fig04.png
+    merged-Gterms_pt_MAXOCNIMPACT_AR.png   fig04.png
     merged-G_terms_map_breakdown.png       fig05.png
     merged-additional-analysis.png         fig06.png
-    G_terms_atmocn_1.png                   figS01.png
-    G_terms_atm_1.png                      figS02.png
-    G_terms_ocn_1.png                      figS03.png
+    merged-Gterms_pt_MAXOCNIMPACT_clim.png figS01.png
+    G_terms_atmocn_1.png                   figS02.png
+    G_terms_atm_1.png                      figS03.png
+    G_terms_ocn_1.png                      figS04.png
+    analysis_cloudcover__2.png             figS05.png
 )
 #    merged-Gterms_pt_AR_REGION_W.png       figS01.png
 

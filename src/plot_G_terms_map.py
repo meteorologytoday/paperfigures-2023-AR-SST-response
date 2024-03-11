@@ -72,7 +72,7 @@ plot_infos = {
 
 
     "msl" : {
-        "levels": np.linspace(-1, 1, 11) * 2,
+        "levels": np.linspace(-1, 1, 17) * 8,
         "levels_std": np.linspace(0, 2, 11),
         "label" : "SLP",
         "unit"  : "$ \\mathrm{hPa} $",
@@ -297,6 +297,15 @@ plot_infos = {
         "unit"  : "$\\mathrm{mm} \\, / \\, \\mathrm{day}$",
         "factor" : - 1.0 / (86400.0 * 1e3),
     }, 
+
+    "EXFevap" : {
+        "levels": G_scale,
+        "levels_std": np.linspace(0, 1, 11) * 1,
+        "label" : "Evap heat flux",
+        "unit"  : "$\\mathrm{W} \\, / \\, \\mathrm{m}^2$",
+        "factor" : - 1e-6 / 2.5e6 * (3996*50),
+    }, 
+
 
 
 

@@ -30,7 +30,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
     lon="${box_params[$(( i * $nparams + 2 ))]}"
 
 
-    for suffix in "" ; do
+    for condition in "AR" "clim" ; do
 
         count=1
 
@@ -41,9 +41,10 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_atmocn${suffix}_${count}.png \\
+            --output $fig_dir/Gterms_pt_${box_name}_atmocn_${condition}_${count}.png \\
             --skip-subfig-cnt 0 \\
             --breakdown atmocn \\
+            --conditions "$condition" \\
             --no-display \\
             --no-title \\
             " &
@@ -53,9 +54,10 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_atm${suffix}_${count}.png \\
-            --skip-subfig-cnt 2 \\
+            --output $fig_dir/Gterms_pt_${box_name}_atm_${condition}_${count}.png \\
+            --skip-subfig-cnt 1 \\
             --breakdown atm \\
+            --conditions "$condition" \\
             --no-display \\
             --no-title \\
             " &
@@ -65,9 +67,10 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_ocn${suffix}_${count}.png \\
-            --skip-subfig-cnt 4 \\
+            --output $fig_dir/Gterms_pt_${box_name}_ocn_${condition}_${count}.png \\
+            --skip-subfig-cnt 2 \\
             --breakdown ocn \\
+            --conditions "$condition" \\
             --no-display \\
             --no-title \\
             " &

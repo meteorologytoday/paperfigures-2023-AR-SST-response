@@ -348,7 +348,7 @@ figsize, gridspec_kw = tool_fig_config.calFigParams(
     w = 3,
     h = [3] + (nrow-1) * [1, ],
     wspace = 1.0,
-    hspace = 1.0,
+    hspace = 1.2,
     w_left = 1.0,
     w_right = 0.2,
     h_bottom = 1.0,
@@ -368,7 +368,7 @@ fig, ax = plt.subplots(
     figsize=figsize,
     subplot_kw = subplot_kw,
     gridspec_kw = gridspec_kw,
-    sharex=True,
+#    sharex=True,
     squeeze=False,
 )
 
@@ -440,8 +440,8 @@ for _ax in ax.flatten():
 
 
 ax[0, 0].set_ylabel("[$ 1 \\times 10^{-6} \\, \\mathrm{K} / \\mathrm{s} $]")
-ax[0, 0].set_ylim([-0.80, 0.20])
-ax[0, 0].legend(ncols=2, prop={'size': 11}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+ax[0, 0].set_ylim([-0.90, 0.10])
+ax[0, 0].legend(ncols=2, prop={'size': 11}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5, handlelength=1.5)
 
 ax[1, 0].set_ylabel("[$ 1 \\times 10^{-5} \\, \\mathrm{m} / \\mathrm{s} $]")
 #ax[1, 0].set_ylabel("[$ \\mathrm{m} $]")
@@ -450,10 +450,10 @@ ax[1, 0].set_ylim(np.array([-1, 1]) * 10.0)
 ax[1, 0].invert_yaxis()
 
 ax[2, 0].set_ylabel("[$ 1 \\times 10^{-2} \\, \\mathrm{K} / \\mathrm{m} $]")
-ax[2, 0].set_ylim(np.array([-1.7, 1.2]))
+ax[2, 0].set_ylim(np.array([-1.5, 1.5]))
 
-ax[3, 0].set_ylim(np.array([-2, 8]))
-ax[3, 0].legend(ncols=1, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5)
+ax[3, 0].set_ylim(np.array([-5, 8]))
+ax[3, 0].legend(ncols=2, prop={'size': 12}, borderpad=0.4, labelspacing=0.2, columnspacing=0.5, loc="lower right", handlelength=1.5)
 ax[3, 0].set_ylabel("[$ \\mathrm{m} / \\mathrm{s} $]")
 
 #ax[2, 0].set_ylabel("[$ 1 \\times 10^{-2} \\, \\mathrm{K} / \\mathrm{m} $]")
