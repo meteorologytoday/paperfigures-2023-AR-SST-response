@@ -2,9 +2,10 @@
 py=python3
 sh=bash
 
+dataset_date=20240122
 
 src_dir=src
-data_dir=./data20240122
+data_dir=./data$dataset_date
 fig_dir=figures
 finalfig_dir=final_figures
 AR_algo=ANOMLEN3

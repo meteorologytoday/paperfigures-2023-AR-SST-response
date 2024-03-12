@@ -161,7 +161,7 @@ gl.ylabel_style = {'size': 10, 'color': 'black'}
  
 cax = tool_fig_config.addAxesNextToAxes(fig, ax, "right", thickness=0.02, spacing=0.02)
 cb = plt.colorbar(mappable, cax=cax, orientation="vertical", pad=0.00)#, #ticks=[-1, 0, 1])
-cb.ax.set_ylabel("AR days per wateryear")
+cb.ax.set_ylabel("AR days per water year")
 
 if not args.no_display:
     plt.show()
