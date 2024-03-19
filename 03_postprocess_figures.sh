@@ -1,9 +1,6 @@
 #!/bin/bash
 
-
 source 00_setup.sh
-
-
 
 if [ -d "$finalfig_dir" ] ; then
     echo "Output directory '${finalfig_dir}' already exists. Do not make new directory."
@@ -16,52 +13,7 @@ fi
 
 echo "Making final figures... "
 
-python3 postprocess_figures.py
-
-if [ ] ; then
-convert $fig_dir/G_terms_atmocn-ocn_2.png \
-        $fig_dir/G_terms_atm_2.png \
-        -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
-fi
-
-convert \
-    \(  \
-        \( $fig_dir/AR_freq_std.png \)  \
-        \( $fig_dir/AR_EOF.png \) -gravity Northwest -append \
-    \) -gravity East \(                               \
-        $fig_dir/atmsfc_2.png -gravity West -chop 50x0          \
-    \) -gravity Northwest +append       \
-     $fig_dir/merged-EOF-forcing.png
-
-
-convert \
-    \( $fig_dir/analysis_mldandcld__2.png \)  \
-    \( $fig_dir/analysis_advbkdn__2.png \)  \
-    -gravity Northwest +append       \
-     $fig_dir/merged-additional-analysis.png
-
-
-convert \
-    \( $fig_dir/dTdt_scatter_ALL_NPAC_a.png \)  \
-    \( $fig_dir/dTdt_scatter_ALL_NPAC_b.png \)  \
-    -gravity West +append       \
-     $fig_dir/merged-dTdt_scatter.png
-
-
-
-
-for box_name in AR_REGION_MAX OLD_AR_REGION_E MAXOCNIMPACT ; do
-
-    for condition in AR clim ; do  
-        convert \
-            \( $fig_dir/Gterms_pt_${box_name}_atmocn_${condition}_1.png \)  \
-            \( $fig_dir/Gterms_pt_${box_name}_atm_${condition}_1.png \)  \
-            \( $fig_dir/Gterms_pt_${box_name}_ocn_${condition}_1.png \)  \
-            -gravity West +append       \
-             $fig_dir/merged-Gterms_pt_${box_name}_${condition}.png
-
-    done
-done
+python3 postprocess_figures.py --input-dir $fig_dir --output-dir $fig_dir
 
 name_pairs=(
     merged-EOF-forcing.png                 fig01.png
@@ -76,7 +28,6 @@ name_pairs=(
     G_terms_ocn_1.png                      figS04.png
     analysis_cloudcover__2.png             figS05.png
 )
-#    merged-Gterms_pt_AR_REGION_W.png       figS01.png
 
 N=$(( ${#name_pairs[@]} / 2 ))
 echo "We have $N figure(s) to rename."

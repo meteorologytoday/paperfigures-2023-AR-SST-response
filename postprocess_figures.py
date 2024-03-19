@@ -1,70 +1,74 @@
 from PIL import Image
 import os
+import argparse
+import postprocess_tools
 
-def toImagesObjects(images):
+parser = argparse.ArgumentParser(
+                    prog = 'postprocess_figures.py',
+                    description = 'Use PIL to generate combined image.',
+)
 
-    _images = []
+parser.add_argument('--input-dir',  type=str, help='Input directory', required=True)
+parser.add_argument('--output-dir', type=str, help='Output directory', required=True)
+args = parser.parse_args()
+print(args)
 
-    for i, image in enumerate(images): 
-        
-        if isinstance(image, Image.Image):
-            _images.append(image)
-        else:
-            _images.append(Image.open(image))
+# ==================================================
 
-    return _images
+img_left = postprocess_tools.concatImages([
+    os.path.join(args.input_dir, "AR_freq_std.png"),
+    os.path.join(args.input_dir, "AR_EOF.png"),
+], "vertical")
 
-
-
-
-def concatImages(images, direction):
-   
-    images = toImagesObjects(images)
-
-    widths, heights = zip(*(i.size for i in images))
-    
-    if direction == "horizontal":
-        
-        total_width = sum(widths)
-        max_height = max(heights)
-
-        new_im = Image.new('RGB', (total_width, max_height))
-
-        x_offset = 0
-        for im in images:
-            new_im.paste(im, (x_offset,0))
-            x_offset += im.size[0]
-
-    
-    elif direction == "vertical":
-        
-        max_width    = max(widths)
-        total_height = sum(heights)
-
-        new_im = Image.new('RGB', (max_width, total_height))
-       
-        y_offset = 0
-        for im in images:
-            new_im.paste(im, (0, y_offset))
-            y_offset += im.size[1]
+img_right = Image.open(os.path.join(args.input_dir, "atmsfc_2.png"))
+img_right = img_right.crop((50, 0, *img_right.size))
 
 
-    else:
+new_img = postprocess_tools.concatImages(
+    [ img_left,  img_right],
+    "horizontal",
+)
 
-        raise Exception("Unknown direction: %s" % (str(direction),))
 
-
-    return new_im
+new_img.save(os.path.join(args.output_dir, "merged-EOF-forcing.png"), format="PNG")
 
 
 
-
-fig_dir="figures"
-finalfig_dir="final_figures"
-
-new_img = concatImages([
-    os.path.join(fig_dir, "G_terms_atmocn-ocn_2.png"), 
-    os.path.join(fig_dir, "G_terms_atm_2.png"), 
+# ==================================================
+new_img = postprocess_tools.concatImages([
+    os.path.join(args.input_dir, "G_terms_atmocn-ocn_2.png"), 
+    os.path.join(args.input_dir, "G_terms_atm_2.png"), 
 ], "horizontal")
 
-new_img.save(os.path.join(fig_dir, "merged-G_terms_map_breakdown.png"), format="PNG")
+new_img.save(os.path.join(args.output_dir, "merged-G_terms_map_breakdown.png"), format="PNG")
+
+
+# ==================================================
+new_img = postprocess_tools.concatImages([
+    os.path.join(args.input_dir, "analysis_mldandcld__2.png"),
+    os.path.join(args.input_dir, "analysis_advbkdn__2.png"),
+], "horizontal")
+
+new_img.save(os.path.join(args.output_dir, "merged-additional-analysis.png"), format="PNG")
+
+# ==================================================
+new_img = postprocess_tools.concatImages([
+    os.path.join(args.input_dir, "dTdt_scatter_ALL_NPAC_a.png"),
+    os.path.join(args.input_dir, "dTdt_scatter_ALL_NPAC_b.png"),
+], "horizontal")
+
+new_img.save(os.path.join(args.output_dir, "merged-dTdt_scatter.png"), format="PNG")
+
+# ======
+for box_name in ["MAXOCNIMPACT",]: 
+    for condition in ["AR", "clim"]:
+
+        new_img = postprocess_tools.concatImages([
+            os.path.join(args.input_dir, "Gterms_pt_%s_atmocn_%s_1.png" % (box_name, condition,)),
+            os.path.join(args.input_dir, "Gterms_pt_%s_atm_%s_1.png" % (box_name, condition,)),
+            os.path.join(args.input_dir, "Gterms_pt_%s_ocn_%s_1.png" % (box_name, condition,)),
+        ], "horizontal")
+
+        new_img.save(os.path.join(args.output_dir, "merged-Gterms_pt_%s_%s.png" % (box_name, condition,)), format="PNG")
+
+
