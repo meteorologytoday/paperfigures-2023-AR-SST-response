@@ -16,9 +16,13 @@ fi
 
 echo "Making final figures... "
 
+python3 postprocess_figures.py
+
+if [ ] ; then
 convert $fig_dir/G_terms_atmocn-ocn_2.png \
         $fig_dir/G_terms_atm_2.png \
         -gravity Northwest +append $fig_dir/merged-G_terms_map_breakdown.png
+fi
 
 convert \
     \(  \
@@ -58,19 +62,6 @@ for box_name in AR_REGION_MAX OLD_AR_REGION_E MAXOCNIMPACT ; do
 
     done
 done
-if [ ] ; then
-# This adds in the EOF timeseries. I think it is okay to just write the
-# correlation with PDO and ENSO in the paper or caption
-convert \
-    \(  \
-        \( $fig_dir/AR_freq_std.png \)  \
-        \( $fig_dir/AR_EOF.png \)       \
-        \( $fig_dir/AR_EOF_timeseries.png \) -gravity Northwest -append \
-    \) \(                               \
-        $fig_dir/atmsfc_2.png           \
-    \) -gravity Northwest +append       \
-     $fig_dir/merged-EOF-forcing.png
-fi
 
 name_pairs=(
     merged-EOF-forcing.png                 fig01.png
