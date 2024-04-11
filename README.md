@@ -19,5 +19,5 @@ Python >= 3.7
 1. Clone this project.
 2. Download the file `data-paperfigures-2024-AR-SST-response_20240410.zip` from [zenodo repository](https://doi.org/10.5281/zenodo.10039181)
 3. Unzip to get folder `data20240410` generated in this git project root folder (i.e., the same folder containing this `README.md` file).
-4. Run `00_main.sh`.
+4. Run `01_main.sh`.
 5. The figures are generated in the folder `final_figures`.
