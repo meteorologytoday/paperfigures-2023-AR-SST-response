@@ -2,14 +2,20 @@
 py=python3
 sh=bash
 
-dataset_date=20240122
+#AR_algo="ANOMLEN3"
+#dataset_date=20240122
+
+AR_algo="HMGFSC24_threshold-1998-2017"
+dataset_date=20240410
 
 src_dir=src
 data_dir=./data$dataset_date
 fig_dir=figures
 finalfig_dir=final_figures
-AR_algo="HMGFSC24_threshold-1998-2017"
-AR_algo="ANOMLEN3"
+
+
+
+
 beg_year=1993
 end_year=2017
 yrng_str="${beg_year}-${end_year}"

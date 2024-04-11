@@ -11,7 +11,7 @@ Python >= 3.7
   - netcdf4
   - xarray 
   - pandas
-  - svg\_stack\
+  - svg\_stack
   - cairosvg
 
 # Reproducing Figures
