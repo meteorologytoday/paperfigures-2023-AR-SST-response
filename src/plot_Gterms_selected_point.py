@@ -5,6 +5,7 @@ import argparse
 from datetime import (timedelta, datetime, timezone)
 from scipy.stats import ttest_ind_from_stats
 import numpy as np
+from colorblind import BW8color
 
 import tool_fig_config
 
@@ -152,21 +153,21 @@ plot_infos = {
     "MLG_frc" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sfc}} $",
-        "color" : "orangered",
+        "color" : BW8color["orange"],
         "hatch" : None,#'///',
     }, 
 
     "MLG_nonfrc" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ocn}} $",
-        "color" : "dodgerblue",
+        "color" : BW8color["blue"],
         "hatch" : None,#'///',
     }, 
 
     "MLG_adv" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
-        "color" : "green",
+        "color" : BW8color["bluishgreen"],
     }, 
 
     "MLG_vdiff" : {
@@ -177,7 +178,7 @@ plot_infos = {
     "MLG_vmix" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vmix}} $",
-        "color" : "orange",
+        "color" : BW8color["yellow"],
     }, 
 
     "MLG_ent_wep" : {
@@ -189,7 +190,7 @@ plot_infos = {
     "MLG_ent_wen" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{det}} $",
-        "color" : "red",
+        "color" : BW8color["reddishpurple"],
     }, 
 
     "MLG_hdiff" : {
@@ -206,21 +207,25 @@ plot_infos = {
     "MLG_frc_sw" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sw}} $",
+        "color" : BW8color["skyblue"],
     }, 
 
     "MLG_frc_lw" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{lw}} $",
+        "color" : BW8color["bluishgreen"],
     }, 
 
     "MLG_frc_lh" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{lh}} $",
+        "color" : BW8color["vermillion"],
     }, 
 
     "MLG_frc_sh" : {
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sh}} $",
+        "color" : BW8color["reddishpurple"],
     }, 
 
     "MLG_frc_dilu" : {
@@ -453,7 +458,7 @@ for s, sname in enumerate(conditions):
 if args.output != "":
    
     print("Output filename: %s" % (args.output,))
-    fig.savefig(args.output, dpi=200)
+    fig.savefig(args.output, dpi=600)
 
 
 if not args.no_display:

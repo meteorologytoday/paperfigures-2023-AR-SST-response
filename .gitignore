@@ -4,6 +4,7 @@
 *.png
 *.tmp
 data/*
+data????????/*
 */__pycache__/*
 
 # Byte-compiled / optimized / DLL files

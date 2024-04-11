@@ -2,6 +2,7 @@ from PIL import Image
 import os
 import argparse
 import postprocess_tools
+from pdf2image import convert_from_path
 
 parser = argparse.ArgumentParser(
                     prog = 'postprocess_figures.py',

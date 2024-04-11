@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import tool_fig_config
 
+from colorblind import BW8color
+
 parser = argparse.ArgumentParser(
                     prog = 'plot_skill',
                     description = 'Plot prediction skill of GFS on AR.',
@@ -122,7 +124,7 @@ plot_infos = {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{sfc}} $",
-        "color" : "orangered",
+        "color" : BW8color["orange"],
         "hatch" : '///',
     }, 
 
@@ -130,7 +132,7 @@ plot_infos = {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{ocn}} $",
-        "color" : "dodgerblue",
+        "color" : BW8color["blue"],
         "hatch" : '///',
     }, 
 
@@ -138,6 +140,7 @@ plot_infos = {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{adv}} $",
+        "color" : BW8color["bluishgreen"],
     }, 
 
     "MLG_vdiff" : {
@@ -150,6 +153,7 @@ plot_infos = {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{vmix}} $",
+        "color" : BW8color["yellow"],
     }, 
 
 
@@ -163,6 +167,7 @@ plot_infos = {
         "factor" : 1e-6,
         "levels": shared_levels,
         "label" : "$ \\dot{\\overline{\\Theta}}_{\mathrm{det}} $",
+        "color" : BW8color["reddishpurple"],
     }, 
 
     "MLG_ent" : {
@@ -300,13 +305,13 @@ plot_info = [
     (
         "(a) Decomposition of $\\dot{\\overline{\\Theta}}_\\mathrm{ocn}$",
         [
-            ("MLG_nonfrc"   , "dodgerblue", "-", 3),
-            ("MLG_adv"      , "green", "-", 2),
-            ("MLG_vmix"     , "orange", "-", 2),
-            ("MLG_ent_wen"  , "red", "-", 2),
-            ("MLG_hdiff"    , "violet", "-", 2),
-            ("MLHADVT_g"     ,   "k", "--", 2),
-            ("MLHADVT_ag"    ,   "k", "-", 2),
+            ("MLG_nonfrc"   , BW8color["blue"], "-", 3),
+            ("MLG_adv"      , BW8color["bluishgreen"], "-", 2),
+            ("MLG_vmix"     , BW8color["yellow"], "-", 2),
+            ("MLG_ent_wen"  , BW8color["reddishpurple"], "-", 2),
+            ("MLG_hdiff"    , BW8color["orange"], "-", 2),
+            ("MLHADVT_g"    , "k", "--", 2),
+            ("MLHADVT_ag"   , "k", "-", 2),
         ],
     ),
 

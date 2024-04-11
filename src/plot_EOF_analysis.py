@@ -7,6 +7,8 @@ from pathlib import Path
 import argparse
 from datetime import (timedelta, datetime, timezone)
 
+import cmocean
+
 import tool_fig_config
 
 def correlate(x1, x2):
@@ -166,7 +168,7 @@ for i, _ax in enumerate(ax):
 
     coords = ds.coords
 
-    mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i) * 10, levels=np.linspace(-1, 1, 21), cmap="bwr", extend="both", transform=proj_norm)
+    mappable = _ax.contourf(coords["lon"], coords["lat"], ds["count_EOF"].sel(EOF=i) * 10, levels=np.linspace(-1, 1, 21), cmap=cmocean.cm.balance, extend="both", transform=proj_norm)
 
     # old
     #_ax.plot([160, 360-160], [30, 35], color="lime", linestyle="dashed", transform=proj_norm)

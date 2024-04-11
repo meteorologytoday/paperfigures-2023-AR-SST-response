@@ -18,14 +18,14 @@ python3 postprocess_figures.py --input-dir $fig_dir --output-dir $fig_dir
 name_pairs=(
     merged-EOF-forcing.png                 fig01.png
     merged-dTdt_scatter.png                fig02.png
-    dTdt_stat_ALL_NPAC.png                 fig03.png
+    dTdt_stat_ALL_NPAC.pdf                 fig03.pdf
     merged-Gterms_pt_MAXOCNIMPACT_AR.png   fig04.png
     merged-G_terms_map_breakdown.png       fig05.png
     merged-additional-analysis.png         fig06.png
     merged-Gterms_pt_MAXOCNIMPACT_clim.png figS01.png
-    G_terms_atmocn_1.png                   figS02.png
-    G_terms_atm_1.png                      figS03.png
-    G_terms_ocn_1.png                      figS04.png
+    G_terms_atm_1.png                      figS02.png
+    G_terms_ocn_1.png                      figS03.png
+    G_terms_atmocn_1.png                   figS04.png
     analysis_cloudcover__2.png             figS05.png
 )
 

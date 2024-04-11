@@ -5,7 +5,7 @@ import traceback
 from pathlib import Path
 import argparse
 from datetime import (timedelta, datetime, timezone)
-
+import cmocean
 import tool_fig_config
 
 
@@ -458,10 +458,10 @@ fig, ax = plt.subplots(
 )
 
 coords = ds_stat["clim"].coords
-cmap = cm.get_cmap("bwr")
+cmap = cmocean.cm.balance
 
-cmap.set_over("green")
-cmap.set_under("yellow")
+#cmap.set_over("green")
+#cmap.set_under("yellow")
 
 mappables = [ None for i in range(len(varnames)) ]
 
