@@ -35,7 +35,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_a.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_a.svg \\
             --AR-algo $AR_algo \\
             --title \"(a)\" \\
             --varnames MLG_frc dMLTdt \\
@@ -46,7 +46,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_b.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_b.svg \\
             --AR-algo $AR_algo \\
             --title \"(b)\" \\
             --varnames MLG_frc MLG_nonfrc \\
@@ -58,7 +58,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_c.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_c.svg \\
             --AR-algo $AR_algo \\
             --title \"(c)\" \\
             --varnames MLG_frc dMLDdt \\
@@ -70,7 +70,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_d.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_d.svg \\
             --AR-algo $AR_algo \\
             --title \"(d)\" \\
             --varnames MLG_frc MLG_vdiff \\
@@ -82,7 +82,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_e.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_e.svg \\
             --AR-algo $AR_algo \\
             --title \"(e)\" \\
             --varnames MLG_frc MLG_frc_sw \\
@@ -93,7 +93,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat-rng $lat_s $lat_n \\
             --lon-rng $lon_w $lon_e \\
-            --output $fig_dir/dTdt_scatter_${box_name}_f.png \\
+            --output $fig_dir/dTdt_scatter_${box_name}_f.svg \\
             --AR-algo $AR_algo \\
             --title \"(f)\" \\
             --varnames MLG_frc MLG_ent \\

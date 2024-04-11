@@ -14,7 +14,7 @@ for suffix in "" ; do
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames IWV IVT SFCWIND \\
-        --output $fig_dir/atmsfc${suffix}_${count}.png \\
+        --output $fig_dir/atmsfc${suffix}_${count}.svg \\
         --time $wm_str \\
         --no-display" &
 
@@ -28,7 +28,7 @@ for suffix in "" ; do
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames IWV IVT SFCWIND \\
-        --output $fig_dir/atmsfc${suffix}_${count}.png \\
+        --output $fig_dir/atmsfc${suffix}_${count}.svg \\
         --time $wm_str \\
         --add-thumbnail-title \\
         --thumbnail-offset 3 \\

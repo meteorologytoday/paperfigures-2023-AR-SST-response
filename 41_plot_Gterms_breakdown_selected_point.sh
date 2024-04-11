@@ -41,7 +41,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_atmocn_${condition}_${count}.png \\
+            --output $fig_dir/Gterms_pt_${box_name}_atmocn_${condition}_${count}.svg \\
             --skip-subfig-cnt 0 \\
             --breakdown atmocn \\
             --conditions "$condition" \\
@@ -54,7 +54,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_atm_${condition}_${count}.png \\
+            --output $fig_dir/Gterms_pt_${box_name}_atm_${condition}_${count}.svg \\
             --skip-subfig-cnt 1 \\
             --breakdown atm \\
             --conditions "$condition" \\
@@ -67,7 +67,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
             --input-dir $input_dir \\
             --lat $lat \\
             --lon $lon \\
-            --output $fig_dir/Gterms_pt_${box_name}_ocn_${condition}_${count}.png \\
+            --output $fig_dir/Gterms_pt_${box_name}_ocn_${condition}_${count}.svg \\
             --skip-subfig-cnt 2 \\
             --breakdown ocn \\
             --conditions "$condition" \\

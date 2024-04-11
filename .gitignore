@@ -1,4 +1,6 @@
-
+.nfs*
+*.pdf
+*.svg
 *.nc
 *.swp
 *.png

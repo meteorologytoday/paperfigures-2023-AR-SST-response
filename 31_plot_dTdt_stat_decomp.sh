@@ -31,7 +31,7 @@ for (( i=0 ; i < $(( ${#box_params[@]} / $nparams )) ; i++ )); do
         --input-dir $input_dir \\
         --lat-rng $lat_s $lat_n \\
         --lon-rng $lon_w $lon_e \\
-        --output $fig_dir/dTdt_stat_${box_name}.pdf \\
+        --output $fig_dir/dTdt_stat_${box_name}.svg \\
         --AR-algo $AR_algo \\
         --title \"\" \\
         --no-display \\

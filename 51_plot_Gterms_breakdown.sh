@@ -12,21 +12,21 @@ for suffix in "" ; do
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames dMLTdt BLANK SFCWIND MLD \\
-        --output $fig_dir/G_terms_atmocn${suffix}_${count}.png \\
+        --output $fig_dir/G_terms_atmocn${suffix}_${count}.svg \\
         --time $wm_str \\
         --no-display" &
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames MLG_frc MLG_frc_sw MLG_frc_lw MLG_frc_sh MLG_frc_lh MLG_frc_dilu \\
-        --output $fig_dir/G_terms_atm${suffix}_${count}.png \\
+        --output $fig_dir/G_terms_atm${suffix}_${count}.svg \\
         --time $wm_str \\
         --no-display" &
 
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames MLG_nonfrc MLG_adv MLG_vmix MLG_ent_wen MLG_hdiff \\
-        --output $fig_dir/G_terms_ocn${suffix}_${count}.png \\
+        --output $fig_dir/G_terms_ocn${suffix}_${count}.svg \\
         --time $wm_str \\
         --no-display" &
 
@@ -40,7 +40,7 @@ for suffix in "" ; do
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames dMLTdt MLG_nonfrc MLG_adv MLG_vmix MLG_ent_wen \\
-        --output $fig_dir/G_terms_atmocn-ocn${suffix}_${count}.png \\
+        --output $fig_dir/G_terms_atmocn-ocn${suffix}_${count}.svg \\
         --time $wm_str \\
         --add-thumbnail-title \\
         --no-display" &
@@ -50,7 +50,7 @@ for suffix in "" ; do
     eval "python3 $src_dir/plot_G_terms_map.py \\
         --input-dir $input_dir \\
         --varnames MLG_frc MLG_frc_sw MLG_frc_lw MLG_frc_sh MLG_frc_lh \\
-        --output $fig_dir/G_terms_atm${suffix}_${count}.png \\
+        --output $fig_dir/G_terms_atm${suffix}_${count}.svg \\
         --time $wm_str \\
         --add-thumbnail-title \\
         --thumbnail-offset 5\\

@@ -471,6 +471,7 @@ for i, mon in enumerate(args.time):
     _ax = ax[:, i]
   
     # Set title for different month except for the whole average mon==7
+    #_ax[0].set_title("(%s) %s" % ("abcdefg"[i], mon), size=30)
     _ax[0].set_title(mon, size=30)
 
     for j, varname in enumerate(varnames):

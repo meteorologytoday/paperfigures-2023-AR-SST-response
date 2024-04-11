@@ -1,4 +1,5 @@
-from PIL import Image
+import svgutils.transform as sg
+
 
 def toImagesObjects(images):
 
@@ -6,10 +7,10 @@ def toImagesObjects(images):
 
     for i, image in enumerate(images): 
         
-        if isinstance(image, Image.Image):
+        if isinstance(image, sg.SVGFigure):
             _images.append(image)
         else:
-            _images.append(Image.open(image))
+            _images.append(sg.fromfile(image))
 
     return _images
 
