@@ -286,7 +286,7 @@ figsize, gridspec_kw = tool_fig_config.calFigParams(
     h = 4.0,
     wspace = 1.0,
     hspace = 0.5,
-    w_left = 0.6,
+    w_left = 1.0,
     w_right = 0.2,
     h_bottom = 0.4,
     h_top = 0.4,
@@ -421,13 +421,19 @@ for s, sname in enumerate(conditions):
     #_ax.set_xlabel("Month")
     _ax.set_ylabel("[ $ 1 \\times 10^{-6} \\mathrm{K} \\, / \\, \\mathrm{s} $ ]")
 
+
+    if sname == "clim":
+        field_type = "climatological"
+    elif sname == "AR":
+        field_type = "anomalous"
+
     _ax.set_title("(%s) %s" % (
         "abcdefghijklmn"[args.skip_subfig_cnt + s],
         #plot_infos_scnario[sname]['title'],
         dict(
-            atmocn = "all",
-            atm = "surface fluxes",
-            ocn = "ocean modulation",
+            atmocn = "Decomposition of %s $ \\dot{\\overline{\\Theta}}_{\mathrm{loc}} $" % (field_type,),
+            atm    = "Decomposition of %s $ \\dot{\\overline{\\Theta}}_{\mathrm{atm}} $" % (field_type,),
+            ocn    = "Decomposition of %s $ \\dot{\\overline{\\Theta}}_{\mathrm{ocn}} $" % (field_type,),
         )[args.breakdown],
     ))
 
